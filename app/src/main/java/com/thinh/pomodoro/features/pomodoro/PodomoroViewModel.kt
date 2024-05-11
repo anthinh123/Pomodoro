@@ -13,14 +13,13 @@ class PodomoroViewModel(
 
     init {
         viewModelScope.launch {
-            pomodoroManager.podomoroUiState.collect {
-                val displayTime: String = convertMillisToTime(it.remainTime)
+            pomodoroManager.podomoroUiState.collect { uiState ->
                 updateState {
                     copy(
-                        displayTime = displayTime,
-                        isRunning = it.isRunning,
-                        playRingtone = it.isFinished,
-                        numberOfWorking = it.numberOfWorking
+                        displayTime = convertMillisToTime(uiState.remainTime),
+                        isRunning = uiState.isRunning,
+                        numberOfWorking = uiState.numberOfWorking,
+                        playRingtone = uiState.isFinished
                     )
                 }
             }

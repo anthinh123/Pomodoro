@@ -3,17 +3,14 @@ package com.thinh.podomoro.features.podomoro
 import com.thinh.podomoro.features.podomoro.PomodoroType.BREAK
 import com.thinh.podomoro.features.podomoro.PomodoroType.LONG_BREAK
 import com.thinh.podomoro.features.podomoro.PomodoroType.WORK
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
+import com.thinh.pomodoro.features.pomodoro.Timer
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-enum class PomodoroType() {
+enum class PomodoroType {
     WORK, BREAK, LONG_BREAK
 }
 
@@ -21,12 +18,13 @@ enum class PodomoroState {
     INIT, PLAYING, PAUSED, FINISHED
 }
 
-const val WORK_TIME = 5 * 60L
-const val BREAK_TIME = 1 * 60L / 60
-const val LONG_BREAK_TIME = 2 * 60L / 60
+const val WORK_TIME = 5 * 60L / 60
+const val BREAK_TIME = 2 * 60L / 60
+const val LONG_BREAK_TIME = 3 * 60L / 60
 
-@OptIn(DelicateCoroutinesApi::class)
-class PomodoroManager {
+class PomodoroManager(
+    private val timer: Timer,
+) {
     private var pomodoroType: PomodoroType = WORK
     private var remainTime: Long = WORK_TIME
     private var state: PodomoroState = PodomoroState.INIT
@@ -36,12 +34,12 @@ class PomodoroManager {
     )
     val podomoroUiState: StateFlow<PodomoroUiState> = _podomoroUiState
 
-    private var job: Job? = null
     private var numberOfWorkings: Int = 0
 
     fun takeActionFromPlayPauseButton() {
         when (state) {
             PodomoroState.INIT -> {
+                startObserverTimer()
                 play()
             }
 
@@ -59,61 +57,62 @@ class PomodoroManager {
         }
     }
 
-    private fun goToNextPomodoroType() = when (pomodoroType) {
-        WORK -> {
-            numberOfWorkings++
-            _podomoroUiState.update { it.copy(numberOfWorking = numberOfWorkings) }
-            if (numberOfWorkings % 4 == 0) {
-                pomodoroType = LONG_BREAK
-            } else {
-                pomodoroType = BREAK
+    private fun startObserverTimer() {
+        GlobalScope.launch {
+            timer.timerState.collect { timerState ->
+                remainTime = timerState.remainTime
+                _podomoroUiState.update {
+                    it.copy(
+                        remainTime = remainTime,
+                        isRunning = timerState.isRunning,
+                        isFinished = timerState.isFinished
+                    )
+                }
+
+                if (timerState.isFinished) {
+                    state = PodomoroState.FINISHED
+                    goToNextPomodoroType()
+                }
             }
-        }
-
-        BREAK -> {
-            pomodoroType = WORK
-        }
-
-        LONG_BREAK -> {
-            pomodoroType = WORK
         }
     }
 
+    private fun goToNextPomodoroType() {
+        when (pomodoroType) {
+            WORK -> {
+                numberOfWorkings++
+                pomodoroType = if (numberOfWorkings % 4 == 0) LONG_BREAK else BREAK
+            }
+
+            BREAK -> pomodoroType = WORK
+
+            LONG_BREAK -> pomodoroType = WORK
+
+        }
+
+        _podomoroUiState.update {
+            it.copy(
+                numberOfWorking = numberOfWorkings,
+                isRunning = false,
+                remainTime = getPlayTime(pomodoroType)
+            )
+        }
+
+    }
+
     private fun play() {
-        playWithTime(getPlayTime(pomodoroType))
+        state = PodomoroState.PLAYING
+        timer.play(getPlayTime(pomodoroType))
     }
 
     private fun pause() {
         state = PodomoroState.PAUSED
-        job?.cancel()
-        _podomoroUiState.update { it.copy(isRunning = false) }
+        timer.pause()
     }
 
     private fun resume() {
-        playWithTime(remainTime)
-    }
-
-    private fun playWithTime(time: Long) {
         state = PodomoroState.PLAYING
-        remainTime = time
-        _podomoroUiState.update { it.copy(remainTime = remainTime, isRunning = true, isFinished = false) }
-        job = GlobalScope.launch(Dispatchers.Main) {
-            while (remainTime > 0) {
-                delay(1000)
-                remainTime--
-                _podomoroUiState.update { it.copy(remainTime = remainTime) }
-            }
-            state = PodomoroState.FINISHED
-            goToNextPomodoroType()
-            remainTime = getPlayTime(pomodoroType)
-            _podomoroUiState.update {
-                it.copy(
-                    remainTime = remainTime,
-                    isRunning = false,
-                    isFinished = true
-                )
-            }
-        }
+        timer.play(remainTime)
     }
 
     private fun getPlayTime(type: PomodoroType) = when (type) {
