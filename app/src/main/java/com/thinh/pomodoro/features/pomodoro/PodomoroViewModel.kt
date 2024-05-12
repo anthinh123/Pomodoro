@@ -28,7 +28,7 @@ class PodomoroViewModel(
 
     override fun createInitialState(): PomodoroUiState {
         return PomodoroUiState(
-            displayTime = "25:00",
+            displayTime = "25\n00",
             isRunning = false,
         )
     }
@@ -55,6 +55,6 @@ class PodomoroViewModel(
     private fun convertMillisToTime(totalSeconds: Long): String {
         val minutes = totalSeconds / 60
         val seconds = totalSeconds % 60
-        return "${minutes.toString().padStart(2, '0')} : ${seconds.toString().padStart(2, '0')}"
+        return "${minutes.toString().padStart(2, '0')}\n${seconds.toString().padStart(2, '0')}"
     }
 }
