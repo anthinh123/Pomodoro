@@ -1,6 +1,5 @@
 package com.thinh.pomodoro.features.pomodoro
 
-import android.media.MediaPlayer
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,16 +16,14 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -37,65 +34,79 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.thinh.podomoro.features.podomoro.PomodoroContract
 import com.thinh.podomoro.features.podomoro.PomodoroContract.PomodoroEvent.ButtonClick
+import com.thinh.podomoro.features.podomoro.PomodoroStage
 import com.thinh.pomodoro.R
+import com.thinh.pomodoro.ui.theme.PomodoroColorScheme
 import com.thinh.pomodoro.ui.theme.PomodoroTheme
-import com.thinh.pomodoro.ui.theme.red_100
-import com.thinh.pomodoro.ui.theme.red_50
-import com.thinh.pomodoro.ui.theme.red_700
-import com.thinh.pomodoro.ui.theme.red_900
+import com.thinh.pomodoro.ui.theme.short_break_dark_background
+import com.thinh.pomodoro.ui.theme.short_break_dark_primary
+import com.thinh.pomodoro.ui.theme.short_break_dark_secondary
+import com.thinh.pomodoro.ui.theme.short_break_dark_tertiary
+import com.thinh.pomodoro.ui.theme.short_break_light_background
+import com.thinh.pomodoro.ui.theme.short_break_light_primary
+import com.thinh.pomodoro.ui.theme.short_break_light_secondary
+import com.thinh.pomodoro.ui.theme.short_break_light_tertiary
+import com.thinh.pomodoro.ui.theme.working_light_secondary
+import com.thinh.pomodoro.ui.theme.working_light_background
+import com.thinh.pomodoro.ui.theme.working_light_tertiary
+import com.thinh.pomodoro.ui.theme.working_light_primary
 
 @Composable
 fun PomodoroScreen2(
     uiState: PomodoroContract.PomodoroUiState,
     onEvent: (PomodoroContract.PomodoroEvent) -> Unit,
+    updateColorScheme: (PomodoroColorScheme) -> Unit
 ) {
 
-    val primaryColor = red_900
-    val secondaryColor = red_100
-    val secondaryColor2 = red_700
-    val backgroundColor = red_50
+//    val context = LocalContext.current
+//    val media: MediaPlayer = remember {
+//        MediaPlayer.create(context, R.raw.school_bell)
+//    }
+//
+//    DisposableEffect(Unit) {
+//        onDispose {
+//            media.stop()
+//            media.release()
+//        }
+//    }
+//
+//    LaunchedEffect(uiState.playRingtone) {
+//        if (uiState.playRingtone) {
+//            media.start()
+//            onEvent(PomodoroContract.PomodoroEvent.PlayedRingtone)
+//        }
+//    }
 
-    val context = LocalContext.current
-    val media: MediaPlayer = remember {
-        MediaPlayer.create(context, R.raw.school_bell)
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            media.stop()
-            media.release()
-        }
-    }
-
-    LaunchedEffect(uiState.playRingtone) {
-        if (uiState.playRingtone) {
-            media.start()
-            onEvent(PomodoroContract.PomodoroEvent.PlayedRingtone)
+    LaunchedEffect(uiState.pomodoroStage) {
+        when (uiState.pomodoroStage) {
+            PomodoroStage.WORK -> updateColorScheme(PomodoroColorScheme.WORKING_COLOR)
+            PomodoroStage.BREAK -> updateColorScheme(PomodoroColorScheme.SHORT_BREAK_COLOR)
+            PomodoroStage.LONG_BREAK -> updateColorScheme(PomodoroColorScheme.LONG_BREAK_COLOR)
         }
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundColor)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Header(
-            icon = R.drawable.ic_focus,
-            title = "Focus",
-            primaryColor = primaryColor,
-            secondaryColor = secondaryColor
+            icon = getHeaderIcon(uiState.pomodoroStage),
+            title = getHeaderText(uiState.pomodoroStage),
+            primaryColor = MaterialTheme.colorScheme.primary,
+            secondaryColor = MaterialTheme.colorScheme.secondary
         )
 
         Text(
             text = "#${uiState.numberOfWorking}",
-            color = primaryColor,
+            color = MaterialTheme.colorScheme.primary,
             fontSize = 20.sp
         )
 
-        TimeText(time = uiState.displayTime, primaryColor = primaryColor)
+        TimeText(time = uiState.displayTime, primaryColor = MaterialTheme.colorScheme.primary)
 
         Row(
             modifier = Modifier
@@ -108,13 +119,13 @@ fun PomodoroScreen2(
                 modifier = Modifier
                     .weight(1f)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(secondaryColor)
+                    .background(MaterialTheme.colorScheme.secondary)
                     .padding(12.dp)
             ) {
                 Icon(
                     modifier = Modifier.size(36.dp),
-                    painter = painterResource(id = R.drawable.baseline_more_horiz_24),
-                    tint = primaryColor,
+                    painter = painterResource(id = R.drawable.rounded_more_horiz_24),
+                    tint = MaterialTheme.colorScheme.primary,
                     contentDescription = null
                 )
             }
@@ -126,15 +137,15 @@ fun PomodoroScreen2(
                 modifier = Modifier
                     .weight(1.5f)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(secondaryColor2)
+                    .background(MaterialTheme.colorScheme.tertiary)
                     .padding(12.dp)
             ) {
                 Icon(
                     modifier = Modifier.size(36.dp),
                     painter = painterResource(
-                        id = if (uiState.isRunning) R.drawable.baseline_pause_24 else R.drawable.baseline_play_arrow_24
+                        id = if (uiState.isRunning) R.drawable.round_pause_24 else R.drawable.round_play_arrow_24
                     ),
-                    tint = primaryColor,
+                    tint = MaterialTheme.colorScheme.primary,
                     contentDescription = null
                 )
             }
@@ -146,13 +157,13 @@ fun PomodoroScreen2(
                 modifier = Modifier
                     .weight(1f)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(secondaryColor)
+                    .background(MaterialTheme.colorScheme.secondary)
                     .padding(12.dp)
             ) {
                 Icon(
                     modifier = Modifier.size(36.dp),
-                    painter = painterResource(id = R.drawable.baseline_skip_next_24),
-                    tint = primaryColor,
+                    painter = painterResource(id = R.drawable.round_skip_next_24),
+                    tint = MaterialTheme.colorScheme.primary,
                     contentDescription = null
                 )
             }
@@ -168,6 +179,8 @@ private fun TimeText(time: String, primaryColor: Color) {
         fontWeight = Bold,
         textAlign = Center,
         color = primaryColor,
+        lineHeight = 160.sp,
+        letterSpacing = 0.sp,
         style = TextStyle(
             platformStyle = PlatformTextStyle(
                 includeFontPadding = false
@@ -204,12 +217,30 @@ private fun Header(
     }
 }
 
+private fun getHeaderText(pomodoroStage: PomodoroStage): String {
+    return when (pomodoroStage) {
+        PomodoroStage.WORK -> "Focus"
+        PomodoroStage.BREAK -> "Short Break"
+        PomodoroStage.LONG_BREAK -> "Long Break"
+    }
+}
+
+private fun getHeaderIcon(pomodoroStage: PomodoroStage): Int {
+    return when (pomodoroStage) {
+        PomodoroStage.WORK -> R.drawable.rounded_local_fire_department_24
+        PomodoroStage.BREAK -> R.drawable.ic_coffee
+        PomodoroStage.LONG_BREAK -> R.drawable.ic_coffee
+    }
+}
 
 @Preview(device = "spec:width=720px, height=748px, dpi=320")
 @Composable
 fun PodomoroScreen2Preview() {
-    PomodoroTheme {
+    PomodoroTheme(
+        pomodoroColorScheme = PomodoroColorScheme.WORKING_COLOR
+    ) {
         PomodoroScreen2(
+            updateColorScheme = {},
             uiState = PomodoroContract.PomodoroUiState(
                 displayTime = "25 : 00",
                 isRunning = false,
@@ -222,8 +253,11 @@ fun PodomoroScreen2Preview() {
 @Preview(device = "spec:width=2640px,height=1080px,dpi=480,orientation=portrait")
 @Composable
 fun PodomoroScreen2Preview2() {
-    PomodoroTheme {
+    PomodoroTheme(
+        pomodoroColorScheme = PomodoroColorScheme.SHORT_BREAK_COLOR
+    ) {
         PomodoroScreen2(
+            updateColorScheme = {},
             uiState = PomodoroContract.PomodoroUiState(
                 displayTime = "25\n00",
                 isRunning = false,

@@ -1,8 +1,8 @@
 package com.thinh.podomoro.features.podomoro
 
-import com.thinh.podomoro.features.podomoro.PomodoroType.BREAK
-import com.thinh.podomoro.features.podomoro.PomodoroType.LONG_BREAK
-import com.thinh.podomoro.features.podomoro.PomodoroType.WORK
+import com.thinh.podomoro.features.podomoro.PomodoroStage.BREAK
+import com.thinh.podomoro.features.podomoro.PomodoroStage.LONG_BREAK
+import com.thinh.podomoro.features.podomoro.PomodoroStage.WORK
 import com.thinh.pomodoro.features.pomodoro.Timer
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-enum class PomodoroType {
+enum class PomodoroStage {
     WORK, BREAK, LONG_BREAK
 }
 
@@ -25,7 +25,7 @@ const val LONG_BREAK_TIME = 3 * 60L / 60
 class PomodoroManager(
     private val timer: Timer,
 ) {
-    private var pomodoroType: PomodoroType = WORK
+    private var pomodoroStage: PomodoroStage = WORK
     private var remainTime: Long = WORK_TIME
     private var state: PodomoroState = PodomoroState.INIT
 
@@ -78,23 +78,24 @@ class PomodoroManager(
     }
 
     private fun goToNextPomodoroType() {
-        when (pomodoroType) {
+        when (pomodoroStage) {
             WORK -> {
                 numberOfWorkings++
-                pomodoroType = if (numberOfWorkings % 4 == 0) LONG_BREAK else BREAK
+                pomodoroStage = if (numberOfWorkings % 4 == 0) LONG_BREAK else BREAK
             }
 
-            BREAK -> pomodoroType = WORK
+            BREAK -> pomodoroStage = WORK
 
-            LONG_BREAK -> pomodoroType = WORK
+            LONG_BREAK -> pomodoroStage = WORK
 
         }
 
         _podomoroUiState.update {
             it.copy(
+                pomodoroStage = pomodoroStage,
                 numberOfWorking = numberOfWorkings,
                 isRunning = false,
-                remainTime = getPlayTime(pomodoroType)
+                remainTime = getPlayTime(pomodoroStage)
             )
         }
 
@@ -102,7 +103,7 @@ class PomodoroManager(
 
     private fun play() {
         state = PodomoroState.PLAYING
-        timer.play(getPlayTime(pomodoroType))
+        timer.play(getPlayTime(pomodoroStage))
     }
 
     private fun pause() {
@@ -115,7 +116,7 @@ class PomodoroManager(
         timer.play(remainTime)
     }
 
-    private fun getPlayTime(type: PomodoroType) = when (type) {
+    private fun getPlayTime(type: PomodoroStage) = when (type) {
         WORK -> WORK_TIME
         BREAK -> BREAK_TIME
         LONG_BREAK -> LONG_BREAK_TIME
@@ -123,6 +124,7 @@ class PomodoroManager(
 }
 
 data class PodomoroUiState(
+    val pomodoroStage: PomodoroStage = WORK,
     val remainTime: Long,
     val isRunning: Boolean,
     val isFinished: Boolean = false,

@@ -16,6 +16,7 @@ class PodomoroViewModel(
             pomodoroManager.podomoroUiState.collect { uiState ->
                 updateState {
                     copy(
+                        pomodoroStage = uiState.pomodoroStage,
                         displayTime = convertMillisToTime(uiState.remainTime),
                         isRunning = uiState.isRunning,
                         numberOfWorking = uiState.numberOfWorking,

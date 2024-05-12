@@ -63,10 +63,40 @@ val md_theme_dark_surfaceTint = Color(0xFF4CDCC4)
 val md_theme_dark_outlineVariant = Color(0xFF3F4946)
 val md_theme_dark_scrim = Color(0xFF000000)
 
-val red_900 = Color(0xFF471515)
-val red_50 = Color(0xFFFFF2F2)
-val red_100 = Color(0x26FF4C4C)
-val red_700 = Color(0xB3FF4C4C)
+// working_light_theme
+val working_light_primary = Color(0xFF471515)
+val working_light_background = Color(0xFFFFF2F2)
+val working_light_secondary = Color(0x26FF4C4C)
+val working_light_tertiary = Color(0xB3FF4C4C)
+
+// working_dark_theme
+val working_dark_primary = Color(0xFFFFF2F2)
+val working_dark_background = Color(0xFF0D0404)
+val working_dark_secondary = Color(0x26FF4C4C)
+val working_dark_tertiary = Color(0xB3FF4C4C)
+
+// short_break_light_theme
+val short_break_light_primary = Color(0xFF14401D)
+val short_break_light_background = Color(0xFFF2FFF5)
+val short_break_light_secondary = Color(0x264DDA6E)
+val short_break_light_tertiary = Color(0x9E4DDA6E)
+
+// short_break_dark_theme
+val short_break_dark_primary = Color(0xFFF2FFF5)
+val short_break_dark_background = Color(0xFF0D0404)
+val short_break_dark_secondary = Color(0x264DDA6E)
+val short_break_dark_tertiary = Color(0x9E4DDA6E)
+
+// long_break_light_theme
+val long_break_light_primary = Color(0xFF153047)
+val long_break_light_background = Color(0xFFF2F9FF)
+val long_break_light_secondary = Color(0x264CACFF)
+val long_break_light_tertiary = Color(0x9E4CACFF)
+
+// long_break_dark_theme
+val long_break_dark_primary = Color(0xFFF5F2FF)
+val long_break_dark_background = Color(0xFF0D0404)
+val long_break_dark_secondary = Color(0x264CACFF)
+val long_break_dark_tertiary = Color(0x9E4CACFF)
 
 
-val seed = Color(0xFF00B7A0)

@@ -6,6 +6,7 @@ import com.thinh.podomoro.mvi.BaseMviContract
 
 interface PomodoroContract : BaseMviContract<PomodoroUiState, PomodoroEvent> {
     data class PomodoroUiState(
+        val pomodoroStage: PomodoroStage = PomodoroStage.WORK,
         val displayTime: String,
         val isRunning: Boolean,
         val numberOfWorking: Int = 0,

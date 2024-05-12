@@ -1,14 +1,10 @@
 package com.thinh.pomodoro.ui.theme
 
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 
 private val LightColors = lightColorScheme(
     primary = md_theme_light_primary,
@@ -75,21 +71,66 @@ private val DarkColors = darkColorScheme(
     scrim = md_theme_dark_scrim,
 )
 
+private val WorkingLightColors = lightColorScheme(
+    primary = working_light_primary,
+    secondary = working_light_secondary,
+    tertiary = working_light_tertiary,
+    background = working_light_background,
+)
+
+private val WorkingDarkColors = darkColorScheme(
+    primary = working_dark_primary,
+    secondary = working_dark_secondary,
+    tertiary = working_dark_tertiary,
+    background = working_dark_background,
+)
+
+private val ShortBreakLightColors = lightColorScheme(
+    primary = short_break_light_primary,
+    secondary = short_break_light_secondary,
+    tertiary = short_break_light_tertiary,
+    background = short_break_light_background,
+)
+
+private val ShortBreakDarkColors = darkColorScheme(
+    primary = short_break_dark_primary,
+    secondary = short_break_dark_secondary,
+    tertiary = short_break_dark_tertiary,
+    background = short_break_dark_background,
+)
+
+private val LongBreakLightColors = lightColorScheme(
+    primary = long_break_light_primary,
+    secondary = long_break_light_secondary,
+    tertiary = long_break_light_tertiary,
+    background = long_break_light_background,
+)
+
+private val LongBreakDarkColors = darkColorScheme(
+    primary = long_break_dark_primary,
+    secondary = long_break_dark_secondary,
+    tertiary = long_break_dark_tertiary,
+    background = long_break_dark_background,
+)
+
 @Composable
 fun PomodoroTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    pomodoroColorScheme: PomodoroColorScheme,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+    val colorScheme = if (darkTheme) {
+        when (pomodoroColorScheme) {
+            PomodoroColorScheme.WORKING_COLOR -> WorkingLightColors
+            PomodoroColorScheme.SHORT_BREAK_COLOR -> ShortBreakLightColors
+            PomodoroColorScheme.LONG_BREAK_COLOR -> LongBreakLightColors
         }
-
-        darkTheme -> DarkColors
-        else -> LightColors
+    } else {
+        when (pomodoroColorScheme) {
+            PomodoroColorScheme.WORKING_COLOR -> WorkingDarkColors
+            PomodoroColorScheme.SHORT_BREAK_COLOR -> ShortBreakDarkColors
+            PomodoroColorScheme.LONG_BREAK_COLOR -> LongBreakDarkColors
+        }
     }
 
     MaterialTheme(
@@ -97,4 +138,10 @@ fun PomodoroTheme(
         typography = Typography,
         content = content
     )
+}
+
+enum class PomodoroColorScheme {
+    WORKING_COLOR,
+    SHORT_BREAK_COLOR,
+    LONG_BREAK_COLOR
 }
