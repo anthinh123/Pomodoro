@@ -1,5 +1,7 @@
 package com.thinh.pomodoro.features.pomodoro
 
+import android.util.Log
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,14 +18,19 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -32,24 +39,12 @@ import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.thinh.podomoro.features.podomoro.PomodoroContract
-import com.thinh.podomoro.features.podomoro.PomodoroContract.PomodoroEvent.ButtonClick
-import com.thinh.podomoro.features.podomoro.PomodoroStage
+import com.thinh.pomodoro.features.pomodoro.PomodoroContract.PomodoroEvent.ButtonClick
+import com.thinh.podomoro.features.pomodoro.PomodoroStage
 import com.thinh.pomodoro.R
 import com.thinh.pomodoro.ui.theme.PomodoroColorScheme
 import com.thinh.pomodoro.ui.theme.PomodoroTheme
-import com.thinh.pomodoro.ui.theme.short_break_dark_background
-import com.thinh.pomodoro.ui.theme.short_break_dark_primary
-import com.thinh.pomodoro.ui.theme.short_break_dark_secondary
-import com.thinh.pomodoro.ui.theme.short_break_dark_tertiary
-import com.thinh.pomodoro.ui.theme.short_break_light_background
-import com.thinh.pomodoro.ui.theme.short_break_light_primary
-import com.thinh.pomodoro.ui.theme.short_break_light_secondary
-import com.thinh.pomodoro.ui.theme.short_break_light_tertiary
-import com.thinh.pomodoro.ui.theme.working_light_secondary
-import com.thinh.pomodoro.ui.theme.working_light_background
-import com.thinh.pomodoro.ui.theme.working_light_tertiary
-import com.thinh.pomodoro.ui.theme.working_light_primary
+import com.thinh.pomodoro.utils.AutoSizeText
 
 @Composable
 fun PomodoroScreen2(
@@ -57,7 +52,6 @@ fun PomodoroScreen2(
     onEvent: (PomodoroContract.PomodoroEvent) -> Unit,
     updateColorScheme: (PomodoroColorScheme) -> Unit
 ) {
-
 //    val context = LocalContext.current
 //    val media: MediaPlayer = remember {
 //        MediaPlayer.create(context, R.raw.school_bell)
@@ -88,31 +82,52 @@ fun PomodoroScreen2(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
+            .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Header(
-            icon = getHeaderIcon(uiState.pomodoroStage),
-            title = getHeaderText(uiState.pomodoroStage),
-            primaryColor = MaterialTheme.colorScheme.primary,
-            secondaryColor = MaterialTheme.colorScheme.secondary
-        )
 
-        Text(
-            text = "#${uiState.numberOfWorking}",
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            Header(
+                icon = getHeaderIcon(uiState.pomodoroStage),
+                title = getHeaderText(uiState.pomodoroStage),
+                primaryColor = MaterialTheme.colorScheme.primary,
+                secondaryColor = MaterialTheme.colorScheme.secondary
+            )
+
+            AutoSizeText(
+                text = "#${uiState.numberOfWorking}",
+                color = MaterialTheme.colorScheme.primary,
+                maxFontSize = 20.sp
+            )
+        }
+
+        AutoSizeText(
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(4f),
+            text = uiState.displayTime,
+            fontWeight = Bold,
+            textAlign = Center,
             color = MaterialTheme.colorScheme.primary,
-            fontSize = 20.sp
+            style = TextStyle(
+                platformStyle = PlatformTextStyle(
+                    includeFontPadding = true
+                ),
+            )
         )
-
-        TimeText(time = uiState.displayTime, primaryColor = MaterialTheme.colorScheme.primary)
 
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(32.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
+                .fillMaxSize()
+                .padding(horizontal = 32.dp)
+                .weight(1f),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
                 onClick = { /* Handle button 1 click */ },
@@ -120,7 +135,7 @@ fun PomodoroScreen2(
                     .weight(1f)
                     .clip(RoundedCornerShape(16.dp))
                     .background(MaterialTheme.colorScheme.secondary)
-                    .padding(12.dp)
+                    .padding(8.dp)
             ) {
                 Icon(
                     modifier = Modifier.size(36.dp),
@@ -138,7 +153,7 @@ fun PomodoroScreen2(
                     .weight(1.5f)
                     .clip(RoundedCornerShape(16.dp))
                     .background(MaterialTheme.colorScheme.tertiary)
-                    .padding(12.dp)
+                    .padding(16.dp)
             ) {
                 Icon(
                     modifier = Modifier.size(36.dp),
@@ -158,7 +173,7 @@ fun PomodoroScreen2(
                     .weight(1f)
                     .clip(RoundedCornerShape(16.dp))
                     .background(MaterialTheme.colorScheme.secondary)
-                    .padding(12.dp)
+                    .padding(8.dp)
             ) {
                 Icon(
                     modifier = Modifier.size(36.dp),
@@ -172,24 +187,6 @@ fun PomodoroScreen2(
 }
 
 @Composable
-private fun TimeText(time: String, primaryColor: Color) {
-    Text(
-        text = time,
-        fontSize = 200.sp,
-        fontWeight = Bold,
-        textAlign = Center,
-        color = primaryColor,
-        lineHeight = 160.sp,
-        letterSpacing = 0.sp,
-        style = TextStyle(
-            platformStyle = PlatformTextStyle(
-                includeFontPadding = false
-            ),
-        )
-    )
-}
-
-@Composable
 private fun Header(
     icon: Int,
     title: String,
@@ -197,7 +194,7 @@ private fun Header(
     secondaryColor: Color
 ) {
     Card(
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(8.dp),
         border = BorderStroke(2.dp, primaryColor),
         colors = CardDefaults.cardColors(containerColor = secondaryColor),
     ) {
@@ -219,7 +216,7 @@ private fun Header(
 
 private fun getHeaderText(pomodoroStage: PomodoroStage): String {
     return when (pomodoroStage) {
-        PomodoroStage.WORK -> "Focus"
+        PomodoroStage.WORK -> "Work"
         PomodoroStage.BREAK -> "Short Break"
         PomodoroStage.LONG_BREAK -> "Long Break"
     }
@@ -242,7 +239,8 @@ fun PodomoroScreen2Preview() {
         PomodoroScreen2(
             updateColorScheme = {},
             uiState = PomodoroContract.PomodoroUiState(
-                displayTime = "25 : 00",
+                displayTime = "25\n" +
+                        "00",
                 isRunning = false,
             ),
             onEvent = {}

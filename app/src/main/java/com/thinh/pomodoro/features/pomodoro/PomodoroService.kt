@@ -7,15 +7,13 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
-import androidx.core.app.ServiceCompat
-import com.thinh.podomoro.features.podomoro.PomodoroManager
+import com.thinh.podomoro.features.pomodoro.PomodoroManager
 import com.thinh.pomodoro.R
 import com.thinh.pomodoro.utils.TimeConvertor.convertMillisToTime
 import kotlinx.coroutines.Dispatchers

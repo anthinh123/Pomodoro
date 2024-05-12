@@ -1,6 +1,6 @@
 package com.thinh.pomodoro._di
 
-import com.thinh.podomoro.features.podomoro.PomodoroManager
+import com.thinh.podomoro.features.pomodoro.PomodoroManager
 import com.thinh.pomodoro.features.pomodoro.Timer
 import com.thinh.pomodoro.features.pomodoro.TimerImpl
 import org.koin.dsl.module

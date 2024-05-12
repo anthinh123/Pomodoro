@@ -1,8 +1,8 @@
 package com.thinh.pomodoro.features.pomodoro
 
-import com.thinh.podomoro.features.podomoro.BREAK_TIME
-import com.thinh.podomoro.features.podomoro.LONG_BREAK_TIME
-import com.thinh.podomoro.features.podomoro.PomodoroManager
+import com.thinh.podomoro.features.pomodoro.BREAK_TIME
+import com.thinh.podomoro.features.pomodoro.LONG_BREAK_TIME
+import com.thinh.podomoro.features.pomodoro.PomodoroManager
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals

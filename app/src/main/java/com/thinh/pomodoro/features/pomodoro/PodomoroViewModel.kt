@@ -1,9 +1,9 @@
-package com.thinh.podomoro.features.podomoro
+package com.thinh.podomoro.features.pomodoro
 
 import androidx.lifecycle.viewModelScope
-import com.thinh.podomoro.features.podomoro.PomodoroContract.PomodoroEvent
-import com.thinh.podomoro.features.podomoro.PomodoroContract.PomodoroEvent.*
-import com.thinh.podomoro.features.podomoro.PomodoroContract.PomodoroUiState
+import com.thinh.pomodoro.features.pomodoro.PomodoroContract.PomodoroEvent
+import com.thinh.pomodoro.features.pomodoro.PomodoroContract.PomodoroEvent.*
+import com.thinh.pomodoro.features.pomodoro.PomodoroContract.PomodoroUiState
 import com.thinh.podomoro.mvi.BaseViewModel
 import kotlinx.coroutines.launch
 

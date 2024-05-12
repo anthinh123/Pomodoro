@@ -1,8 +1,8 @@
-package com.thinh.podomoro.features.podomoro
+package com.thinh.podomoro.features.pomodoro
 
-import com.thinh.podomoro.features.podomoro.PomodoroStage.BREAK
-import com.thinh.podomoro.features.podomoro.PomodoroStage.LONG_BREAK
-import com.thinh.podomoro.features.podomoro.PomodoroStage.WORK
+import com.thinh.podomoro.features.pomodoro.PomodoroStage.BREAK
+import com.thinh.podomoro.features.pomodoro.PomodoroStage.LONG_BREAK
+import com.thinh.podomoro.features.pomodoro.PomodoroStage.WORK
 import com.thinh.pomodoro.features.pomodoro.Timer
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
