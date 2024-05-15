@@ -65,17 +65,19 @@ fun AutoSizeText(
 
         val calculateIntrinsics = @Composable {
             val mergedStyle = style.merge(
-                TextStyle(
-                    color = color,
-                    fontSize = shrunkFontSize,
-                    fontWeight = fontWeight,
-                    textAlign = textAlign,
-                    lineHeight = lineHeight,
-                    fontFamily = fontFamily,
-                    textDecoration = textDecoration,
-                    fontStyle = fontStyle,
-                    letterSpacing = letterSpacing
-                )
+                textAlign?.let {
+                    TextStyle(
+                        color = color,
+                        fontSize = shrunkFontSize,
+                        fontWeight = fontWeight,
+                        textAlign = it,
+                        lineHeight = lineHeight,
+                        fontFamily = fontFamily,
+                        textDecoration = textDecoration,
+                        fontStyle = fontStyle,
+                        letterSpacing = letterSpacing
+                    )
+                }
             )
             Paragraph(
                 text = text,
@@ -111,8 +113,6 @@ fun AutoSizeText(
                 intrinsics = calculateIntrinsics()
             }
         }
-
-        Log.d("thinhav", "shrunkFontSize: $shrunkFontSize -- maxFontSize: $maxFontSize")
 
         if (maxFontSize.isSpecified && shrunkFontSize > maxFontSize) {
             shrunkFontSize = maxFontSize

@@ -11,7 +11,8 @@ interface PomodoroContract : BaseMviContract<PomodoroUiState, PomodoroEvent> {
         val displayTime: String,
         val isRunning: Boolean,
         val numberOfWorking: Int = 0,
-        val playRingtone: Boolean = false
+        val playRingtone: Boolean = false,
+        val isAppGoToBackground : Boolean = false,
     )
 
     sealed class PomodoroEvent {

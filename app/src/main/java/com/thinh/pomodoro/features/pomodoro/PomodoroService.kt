@@ -16,6 +16,7 @@ import androidx.core.app.NotificationCompat
 import com.thinh.podomoro.features.pomodoro.PomodoroManager
 import com.thinh.pomodoro.R
 import com.thinh.pomodoro.utils.TimeConvertor.convertMillisToTime
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -39,16 +40,14 @@ class PomodoroService(
 
     private lateinit var collectPomodoroUiStateJob: Job
 
-    val timeUpdateFlow = MutableStateFlow("")
-
     private val binder = LocalBinder()
 
     private lateinit var stopPendingIntent: PendingIntent
     private lateinit var pomodoroPendingIntent: PendingIntent
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
         super.onCreate()
-        Log.d("thinhav", "PomodoroService onCreate")
 
         val stopIntent = Intent(this, PomodoroService::class.java)
         stopIntent.action = PomodoroAction.STOP.name
@@ -71,21 +70,20 @@ class PomodoroService(
         collectPomodoroUiStateJob = GlobalScope.launch(Dispatchers.Main) {
             pomodoroManager.podomoroUiState.collect {
                 val displayTime: String = convertMillisToTime(it.remainTime)
-                updateNotificationTime(displayTime)
-                timeUpdateFlow.update {
-                    displayTime
-                }
+                updateNotificationTime(displayTime, it.isRunning)
             }
         }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val action = intent?.action?.let { PomodoroAction.valueOf(it) }
-        Log.d("thinhav", "action: $action")
         when (action) {
             PomodoroAction.START -> {
                 val notificationLayout = RemoteViews(packageName, R.layout.pomodoro_notification)
-                startForeground(POMODORO_CHANNEL_ID, createNotification(notificationLayout))
+                startForeground(
+                    POMODORO_CHANNEL_ID,
+                    createNotification(notificationLayout = notificationLayout, isRunning = true)
+                )
             }
 
             PomodoroAction.POMODORO_ACTION -> {
@@ -107,7 +105,6 @@ class PomodoroService(
     }
 
     override fun onDestroy() {
-        Log.d("thinhav", "PomodoroService onDestroy")
         collectPomodoroUiStateJob.cancel()
         super.onDestroy()
     }
@@ -116,7 +113,10 @@ class PomodoroService(
         pomodoroManager.takeActionFromPlayPauseButton()
     }
 
-    private fun createNotification(notificationLayout: RemoteViews): Notification {
+    private fun createNotification(
+        notificationLayout: RemoteViews,
+        isRunning: Boolean = false
+    ): Notification {
         val notificationChannelId = "POMODORO_CHANNEL_ID"
         val notificationChannelName = "Pomodoro Timer"
         val notificationManager =
@@ -134,12 +134,12 @@ class PomodoroService(
         val notificationBuilder = NotificationCompat.Builder(this, notificationChannelId)
         notificationBuilder.setOngoing(true)
             .setContentTitle("Pomodoro Timer")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.rounded_av_timer_24)
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
             .setCustomContentView(notificationLayout)
             .addAction(
                 android.R.drawable.ic_menu_close_clear_cancel,
-                "Action",
+                if (isRunning) "Pause" else "Start",
                 pomodoroPendingIntent
             )
             .addAction(
@@ -152,13 +152,13 @@ class PomodoroService(
         return notificationBuilder.build()
     }
 
-    private fun updateNotificationTime(time: String) {
+    private fun updateNotificationTime(time: String, isRunning: Boolean) {
         val notificationLayout = RemoteViews(packageName, R.layout.pomodoro_notification)
         notificationLayout.setTextViewText(R.id.time, time)
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val notification = createNotification(notificationLayout)
+        val notification = createNotification(notificationLayout, isRunning)
         notificationManager.notify(POMODORO_CHANNEL_ID, notification)
     }
 

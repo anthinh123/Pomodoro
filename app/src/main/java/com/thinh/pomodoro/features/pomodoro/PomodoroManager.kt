@@ -18,9 +18,9 @@ enum class PodomoroState {
     INIT, PLAYING, PAUSED, FINISHED
 }
 
-const val WORK_TIME = 5 * 60L / 60
-const val BREAK_TIME = 2 * 60L / 60
-const val LONG_BREAK_TIME = 3 * 60L / 60
+const val WORK_TIME = 25 * 60L
+const val BREAK_TIME = 5 * 60L
+const val LONG_BREAK_TIME = 15 * 60L
 
 class PomodoroManager(
     private val timer: Timer,
@@ -98,7 +98,6 @@ class PomodoroManager(
                 remainTime = getPlayTime(pomodoroStage)
             )
         }
-
     }
 
     private fun play() {
