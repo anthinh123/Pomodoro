@@ -5,8 +5,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.thinh.pomodoro.features.pomodoro.PomodoroAction
-import com.thinh.pomodoro.features.pomodoro.PomodoroService
+import com.thinh.pomodoro.features.pomodoro.ui.PomodoroAction
+import com.thinh.pomodoro.features.pomodoro.ui.PomodoroService
 import com.thinh.pomodoro.navigation.PodomoroApp
 
 class MainActivity : ComponentActivity() {

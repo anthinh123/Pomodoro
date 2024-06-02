@@ -4,20 +4,29 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.thinh.pomodoro.database.WorkDay
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WorkDayDao {
-    @Query("SELECT * FROM WorkDay ORDER BY date DESC")
-    fun getAllWorkDays(): Flow<List<WorkDay>>
+    @Query("SELECT * FROM WorkDayEntity ORDER BY date DESC")
+    fun getAllWorkDays(): Flow<List<WorkDayEntity>>
 
     @Insert
-    suspend fun insert(workDay: WorkDay): Long
+    suspend fun insert(workDayEntity: WorkDayEntity): Long
 
     @Update
-    suspend fun update(workDay: WorkDay)
+    suspend fun update(workDayEntity: WorkDayEntity)
 
-    @Query("SELECT * FROM WorkDay WHERE date = :date")
-    suspend fun getWorkDayByDate(date: Long): WorkDay?
+    @Query("SELECT * FROM WorkDayEntity WHERE date = :date")
+    suspend fun getWorkDayByDate(date: Long): WorkDayEntity?
+
+    @Query("SELECT * FROM WorkDayEntity WHERE date BETWEEN :startDate AND :endDate ORDER BY date DESC")
+    fun getWorkDaysInRange(startDate: Long, endDate: Long): Flow<List<WorkDayEntity>>
+
+    @Query("SELECT * FROM WorkDayEntity WHERE date BETWEEN :startDate AND :endDate AND type_of_pomodoro = :pomodoroType  ORDER BY date DESC")
+    fun getCountOfWorksInRange(
+        pomodoroType: Int,
+        startDate: Long,
+        endDate: Long
+    ): Flow<List<WorkDayEntity>>
 }

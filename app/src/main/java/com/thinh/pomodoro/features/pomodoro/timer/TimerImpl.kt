@@ -1,4 +1,4 @@
-package com.thinh.pomodoro.features.pomodoro
+package com.thinh.pomodoro.features.pomodoro.timer
 
 import android.os.CountDownTimer
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,15 +9,22 @@ class TimerImpl : Timer {
 
     private var timer: CountDownTimer? = null
 
-    private val _timerState =
-        MutableStateFlow(TimerState(remainTime = 0, isRunning = false, isFinished = false))
-    override val timerState: StateFlow<TimerState> = _timerState
+    private val _timerUiState = MutableStateFlow(TimerUiState(remainTime = 0))
+    override val timerUiState: StateFlow<TimerUiState> = _timerUiState
+
+    override fun initTime(time: Long) {
+        _timerUiState.update {
+            it.copy(
+                remainTime = time,
+                state = TimeState.INIT,
+            )
+        }
+    }
 
     override fun play(time: Long) {
-        _timerState.update {
+        _timerUiState.update {
             it.copy(
-                isRunning = true,
-                isFinished = false
+                state = TimeState.PLAYING,
             )
         }
         timer = createCountDownTimer(time).start()
@@ -25,38 +32,41 @@ class TimerImpl : Timer {
 
     private fun createCountDownTimer(time: Long) = object : CountDownTimer(time * 1000, 1000) {
         override fun onTick(millisUntilFinished: Long) {
-            _timerState.update {
+            _timerUiState.update {
                 it.copy(remainTime = millisUntilFinished / 1000)
             }
         }
 
         override fun onFinish() {
-            _timerState.update {
+            _timerUiState.update {
                 it.copy(
                     remainTime = 0,
-                    isRunning = false,
-                    isFinished = true
+                    state = TimeState.FINISHED
                 )
             }
         }
     }
 
     override fun pause() {
-        cancelTimerAndUpdateState(isFinished = false)
+        timer?.cancel()
+        _timerUiState.update {
+            it.copy(
+                state = TimeState.PAUSED,
+            )
+        }
     }
 
     override fun stop() {
-        cancelTimerAndUpdateState(isFinished = true)
-    }
-
-    private fun cancelTimerAndUpdateState(isFinished: Boolean) {
         timer?.cancel()
-        _timerState.update {
+        _timerUiState.update {
             it.copy(
-                isRunning = false,
-                isFinished = isFinished
+                state = TimeState.FINISHED
             )
         }
+    }
+
+    override fun reset() {
+        timer?.cancel()
     }
 
 }

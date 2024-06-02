@@ -1,4 +1,4 @@
-package com.thinh.pomodoro.features.pomodoro
+package com.thinh.pomodoro.features.pomodoro.ui
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -10,25 +10,24 @@ import android.content.Intent
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
-import com.thinh.podomoro.features.pomodoro.PomodoroManager
 import com.thinh.pomodoro.R
-import com.thinh.pomodoro.utils.TimeConvertor.convertMillisToTime
+import com.thinh.pomodoro.features.pomodoro.timer.TimeState
+import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroManager
+import com.thinh.pomodoro.utils.TimeUtil.convertMillisToTime
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 enum class PomodoroAction {
     START,
     POMODORO_ACTION,
-    STOP
+    STOP,
+    SKIP_STAGE
 }
 
 class PomodoroService(
@@ -39,8 +38,6 @@ class PomodoroService(
     private val pomodoroManager: PomodoroManager by inject()
 
     private lateinit var collectPomodoroUiStateJob: Job
-
-    private val binder = LocalBinder()
 
     private lateinit var stopPendingIntent: PendingIntent
     private lateinit var pomodoroPendingIntent: PendingIntent
@@ -70,7 +67,7 @@ class PomodoroService(
         collectPomodoroUiStateJob = GlobalScope.launch(Dispatchers.Main) {
             pomodoroManager.podomoroUiState.collect {
                 val displayTime: String = convertMillisToTime(it.remainTime)
-                updateNotificationTime(displayTime, it.isRunning)
+                updateNotificationTime(displayTime, it.timeState == TimeState.PLAYING)
             }
         }
     }
@@ -100,17 +97,17 @@ class PomodoroService(
         return START_STICKY
     }
 
-    override fun onBind(intent: Intent): IBinder {
-        return binder
-    }
-
     override fun onDestroy() {
         collectPomodoroUiStateJob.cancel()
         super.onDestroy()
     }
 
+    override fun onBind(p0: Intent?): IBinder {
+        return Binder()
+    }
+
     private fun handlePomodoroAction() {
-        pomodoroManager.takeActionFromPlayPauseButton()
+        pomodoroManager.takeActionToTimer()
     }
 
     private fun createNotification(
@@ -162,7 +159,4 @@ class PomodoroService(
         notificationManager.notify(POMODORO_CHANNEL_ID, notification)
     }
 
-    inner class LocalBinder : Binder() {
-        fun getService(): PomodoroService = this@PomodoroService
-    }
 }

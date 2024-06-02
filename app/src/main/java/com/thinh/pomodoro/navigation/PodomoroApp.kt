@@ -14,8 +14,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.thinh.podomoro.features.pomodoro.PodomoroViewModel
-import com.thinh.pomodoro.features.pomodoro.PomodoroScreen2
+import com.thinh.pomodoro.features.pomodoro.ui.PodomoroViewModel
+import com.thinh.pomodoro.features.pomodoro.ui.PomodoroScreen2
 import com.thinh.pomodoro.ui.theme.PomodoroColorScheme
 import com.thinh.pomodoro.ui.theme.PomodoroTheme
 import org.koin.androidx.compose.koinViewModel

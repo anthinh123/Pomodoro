@@ -1,4 +1,4 @@
-package com.thinh.pomodoro.features.pomodoro
+package com.thinh.pomodoro.features.pomodoro.ui
 
 import android.app.ActivityManager
 import android.content.Context
@@ -41,9 +41,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
-import com.thinh.podomoro.features.pomodoro.PomodoroStage
 import com.thinh.pomodoro.R
-import com.thinh.pomodoro.features.pomodoro.PomodoroContract.PomodoroEvent.ButtonClick
+import com.thinh.pomodoro.features.pomodoro.ui.PomodoroContract.PomodoroEvent.PlayPauseEvent
+import com.thinh.pomodoro.features.pomodoro.ui.PomodoroContract.PomodoroEvent.ResetTime
+import com.thinh.pomodoro.features.pomodoro.ui.PomodoroContract.PomodoroEvent.SkipStage
+import com.thinh.pomodoro.features.pomodoro.timer.TimeState
+import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroStage
 import com.thinh.pomodoro.ui.theme.PomodoroColorScheme
 import com.thinh.pomodoro.ui.theme.PomodoroTheme
 import com.thinh.pomodoro.utils.AutoSizeText
@@ -66,8 +69,8 @@ fun PomodoroScreen2(
         }
     }
 
-    LaunchedEffect(uiState.playRingtone) {
-        if (uiState.playRingtone) {
+    LaunchedEffect(uiState.timeState) {
+        if (uiState.timeState == TimeState.FINISHED) {
             media.start()
             onEvent(PomodoroContract.PomodoroEvent.PlayedRingtone)
         }
@@ -78,7 +81,9 @@ fun PomodoroScreen2(
     }
 
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
-        startPomodoroService(context)
+        if (uiState.timeState == TimeState.PAUSED || uiState.timeState == TimeState.PLAYING) {
+            startPomodoroService(context)
+        }
     }
 
     LaunchedEffect(uiState.pomodoroStage) {
@@ -140,7 +145,7 @@ fun PomodoroScreen2(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
-                onClick = { /* Handle button 1 click */ },
+                onClick = { onEvent(ResetTime) },
                 modifier = Modifier
                     .weight(1f)
                     .clip(RoundedCornerShape(16.dp))
@@ -149,16 +154,16 @@ fun PomodoroScreen2(
             ) {
                 Icon(
                     modifier = Modifier.size(36.dp),
-                    painter = painterResource(id = R.drawable.rounded_more_horiz_24),
+                    painter = painterResource(id = R.drawable.round_replay_24),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = null
                 )
             }
 
-            Spacer(modifier = Modifier.width(16.dp)) // Add this line
+            Spacer(modifier = Modifier.width(16.dp))
 
             IconButton(
-                onClick = { onEvent(ButtonClick) },
+                onClick = { onEvent(PlayPauseEvent) },
                 modifier = Modifier
                     .weight(1.5f)
                     .clip(RoundedCornerShape(16.dp))
@@ -168,17 +173,17 @@ fun PomodoroScreen2(
                 Icon(
                     modifier = Modifier.size(36.dp),
                     painter = painterResource(
-                        id = if (uiState.isRunning) R.drawable.round_pause_24 else R.drawable.round_play_arrow_24
+                        id = if (uiState.timeState == TimeState.PLAYING) R.drawable.round_pause_24 else R.drawable.round_play_arrow_24
                     ),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = null
                 )
             }
 
-            Spacer(modifier = Modifier.width(16.dp)) // Add this line
+            Spacer(modifier = Modifier.width(16.dp))
 
             IconButton(
-                onClick = { /* Handle button 3 click */ },
+                onClick = { onEvent(SkipStage) },
                 modifier = Modifier
                     .weight(1f)
                     .clip(RoundedCornerShape(16.dp))
@@ -280,7 +285,7 @@ fun PodomoroScreen2Preview() {
             uiState = PomodoroContract.PomodoroUiState(
                 displayTime = "25\n" +
                         "00",
-                isRunning = false,
+                timeState = TimeState.INIT,
             ),
             onEvent = {}
         )
@@ -297,7 +302,7 @@ fun PodomoroScreen2Preview2() {
             updateColorScheme = {},
             uiState = PomodoroContract.PomodoroUiState(
                 displayTime = "25\n00",
-                isRunning = false,
+                timeState = TimeState.INIT,
             ),
             onEvent = {}
         )

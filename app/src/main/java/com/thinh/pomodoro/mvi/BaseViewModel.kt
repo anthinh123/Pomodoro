@@ -1,4 +1,4 @@
-package com.thinh.podomoro.mvi
+package com.thinh.pomodoro.mvi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

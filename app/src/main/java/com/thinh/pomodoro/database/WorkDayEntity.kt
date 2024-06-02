@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class WorkDay(
+data class WorkDayEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val date: Long,

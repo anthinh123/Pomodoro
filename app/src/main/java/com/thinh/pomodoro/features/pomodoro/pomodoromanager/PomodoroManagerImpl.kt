@@ -1,76 +1,77 @@
-package com.thinh.podomoro.features.pomodoro
+package com.thinh.pomodoro.features.pomodoro.pomodoromanager
 
-import com.thinh.podomoro.features.pomodoro.PomodoroStage.BREAK
-import com.thinh.podomoro.features.pomodoro.PomodoroStage.LONG_BREAK
-import com.thinh.podomoro.features.pomodoro.PomodoroStage.WORK
-import com.thinh.pomodoro.features.pomodoro.Timer
+import com.thinh.pomodoro.features.pomodoro.timer.TimeState
+import com.thinh.pomodoro.features.pomodoro.timer.Timer
+import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroStage.BREAK
+import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroStage.LONG_BREAK
+import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroStage.WORK
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-enum class PomodoroStage {
-    WORK, BREAK, LONG_BREAK
-}
 
-enum class PodomoroState {
-    INIT, PLAYING, PAUSED, FINISHED
-}
-
-const val WORK_TIME = 25 * 60L
-const val BREAK_TIME = 5 * 60L
-const val LONG_BREAK_TIME = 15 * 60L
-
-class PomodoroManager(
+class PomodoroManagerImpl(
     private val timer: Timer,
-) {
+) : PomodoroManager {
     private var pomodoroStage: PomodoroStage = WORK
-    private var remainTime: Long = WORK_TIME
-    private var state: PodomoroState = PodomoroState.INIT
+    private var remainTime: Long = 0
+    private var timeState: TimeState = TimeState.INIT
 
-    private val _podomoroUiState = MutableStateFlow(
-        PodomoroUiState(remainTime = remainTime, isRunning = false)
-    )
-    val podomoroUiState: StateFlow<PodomoroUiState> = _podomoroUiState
+    private val _podomoroUiState = MutableStateFlow(PodomoroUiState(remainTime = remainTime))
+    override val podomoroUiState: StateFlow<PodomoroUiState> = _podomoroUiState
 
     private var numberOfWorkings: Int = 0
 
-    fun takeActionFromPlayPauseButton() {
-        when (state) {
-            PodomoroState.INIT -> {
-                startObserverTimer()
+    init {
+        timer.initTime(getPlayTime(pomodoroStage))
+        startObserverTimer()
+    }
+
+    override fun takeActionToTimer() {
+        when (timeState) {
+            TimeState.INIT -> {
                 play()
             }
 
-            PodomoroState.PLAYING -> {
+            TimeState.PLAYING -> {
                 pause()
             }
 
-            PodomoroState.PAUSED -> {
+            TimeState.PAUSED -> {
                 resume()
             }
 
-            PodomoroState.FINISHED -> {
+            TimeState.FINISHED -> {
                 play()
             }
         }
     }
 
+    override fun skipPomodoro() {
+        timer.stop()
+    }
+
+    override fun resetPomodoro() {
+        timer.reset()
+        timeState = TimeState.INIT
+        timer.initTime(getPlayTime(pomodoroStage))
+    }
+
     private fun startObserverTimer() {
         GlobalScope.launch {
-            timer.timerState.collect { timerState ->
+            timer.timerUiState.collect { timerState ->
                 remainTime = timerState.remainTime
                 _podomoroUiState.update {
                     it.copy(
                         remainTime = remainTime,
-                        isRunning = timerState.isRunning,
-                        isFinished = timerState.isFinished
+                        timeState = timerState.state
                     )
                 }
 
-                if (timerState.isFinished) {
-                    state = PodomoroState.FINISHED
+                if (timerState.state == TimeState.FINISHED) {
+                    timeState = TimeState.INIT
                     goToNextPomodoroType()
                 }
             }
@@ -87,31 +88,30 @@ class PomodoroManager(
             BREAK -> pomodoroStage = WORK
 
             LONG_BREAK -> pomodoroStage = WORK
-
         }
+
+        timer.initTime(getPlayTime(pomodoroStage))
 
         _podomoroUiState.update {
             it.copy(
                 pomodoroStage = pomodoroStage,
                 numberOfWorking = numberOfWorkings,
-                isRunning = false,
-                remainTime = getPlayTime(pomodoroStage)
             )
         }
     }
 
     private fun play() {
-        state = PodomoroState.PLAYING
+        timeState = TimeState.PLAYING
         timer.play(getPlayTime(pomodoroStage))
     }
 
     private fun pause() {
-        state = PodomoroState.PAUSED
+        timeState = TimeState.PAUSED
         timer.pause()
     }
 
     private fun resume() {
-        state = PodomoroState.PLAYING
+        timeState = TimeState.PLAYING
         timer.play(remainTime)
     }
 
@@ -125,7 +125,6 @@ class PomodoroManager(
 data class PodomoroUiState(
     val pomodoroStage: PomodoroStage = WORK,
     val remainTime: Long,
-    val isRunning: Boolean,
-    val isFinished: Boolean = false,
+    val timeState: TimeState = TimeState.INIT,
     val numberOfWorking: Int = 0,
 )

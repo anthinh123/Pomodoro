@@ -31,7 +31,7 @@
         </activity>
 
         <service
-            android:name=".features.pomodoro.PomodoroService"
+            android:name=".features.pomodoro.ui.PomodoroService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback">
