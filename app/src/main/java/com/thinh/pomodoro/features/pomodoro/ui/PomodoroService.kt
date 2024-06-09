@@ -131,12 +131,12 @@ class PomodoroService(
         val notificationBuilder = NotificationCompat.Builder(this, notificationChannelId)
         notificationBuilder.setOngoing(true)
             .setContentTitle("Pomodoro Timer")
-            .setSmallIcon(R.drawable.rounded_av_timer_24)
+            .setSmallIcon(R.drawable.outline_timer_24)
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
             .setCustomContentView(notificationLayout)
             .addAction(
                 android.R.drawable.ic_menu_close_clear_cancel,
-                if (isRunning) "Pause" else "Start",
+                if (isRunning) "Pause" else "Play",
                 pomodoroPendingIntent
             )
             .addAction(

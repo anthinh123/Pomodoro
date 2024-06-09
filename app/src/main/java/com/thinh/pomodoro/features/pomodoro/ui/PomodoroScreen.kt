@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Build
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -52,7 +53,7 @@ import com.thinh.pomodoro.ui.theme.PomodoroTheme
 import com.thinh.pomodoro.utils.AutoSizeText
 
 @Composable
-fun PomodoroScreen2(
+fun PomodoroScreen(
     uiState: PomodoroContract.PomodoroUiState,
     onEvent: (PomodoroContract.PomodoroEvent) -> Unit,
     updateColorScheme: (PomodoroColorScheme) -> Unit
@@ -69,8 +70,8 @@ fun PomodoroScreen2(
         }
     }
 
-    LaunchedEffect(uiState.timeState) {
-        if (uiState.timeState == TimeState.FINISHED) {
+    LaunchedEffect(uiState.playRingTone) {
+        if (uiState.playRingTone) {
             media.start()
             onEvent(PomodoroContract.PomodoroEvent.PlayedRingtone)
         }
@@ -280,7 +281,7 @@ fun PodomoroScreen2Preview() {
     PomodoroTheme(
         pomodoroColorScheme = PomodoroColorScheme.WORKING_COLOR
     ) {
-        PomodoroScreen2(
+        PomodoroScreen(
             updateColorScheme = {},
             uiState = PomodoroContract.PomodoroUiState(
                 displayTime = "25\n" +
@@ -298,7 +299,7 @@ fun PodomoroScreen2Preview2() {
     PomodoroTheme(
         pomodoroColorScheme = PomodoroColorScheme.SHORT_BREAK_COLOR
     ) {
-        PomodoroScreen2(
+        PomodoroScreen(
             updateColorScheme = {},
             uiState = PomodoroContract.PomodoroUiState(
                 displayTime = "25\n00",

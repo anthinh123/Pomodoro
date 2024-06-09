@@ -1,23 +1,25 @@
 package com.thinh.pomodoro.features.pomodoro.pomodoromanager
 
+import com.thinh.pomodoro.features.pomodoro.data.WorkDay
 import com.thinh.pomodoro.features.pomodoro.timer.TimeState
 import com.thinh.pomodoro.features.pomodoro.timer.Timer
 import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroStage.BREAK
 import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroStage.LONG_BREAK
 import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroStage.WORK
+import com.thinh.pomodoro.features.pomodoro.usecase.insert.InsertWorkDayUseCase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-
 class PomodoroManagerImpl(
     private val timer: Timer,
+    private val insertWorkDayUseCase: InsertWorkDayUseCase,
 ) : PomodoroManager {
     private var pomodoroStage: PomodoroStage = WORK
     private var remainTime: Long = 0
-    private var timeState: TimeState = TimeState.INIT
+    private var workDay: WorkDay? = null
 
     private val _podomoroUiState = MutableStateFlow(PodomoroUiState(remainTime = remainTime))
     override val podomoroUiState: StateFlow<PodomoroUiState> = _podomoroUiState
@@ -30,7 +32,7 @@ class PomodoroManagerImpl(
     }
 
     override fun takeActionToTimer() {
-        when (timeState) {
+        when (_podomoroUiState.value.timeState) {
             TimeState.INIT -> {
                 play()
             }
@@ -55,7 +57,6 @@ class PomodoroManagerImpl(
 
     override fun resetPomodoro() {
         timer.reset()
-        timeState = TimeState.INIT
         timer.initTime(getPlayTime(pomodoroStage))
     }
 
@@ -71,7 +72,7 @@ class PomodoroManagerImpl(
                 }
 
                 if (timerState.state == TimeState.FINISHED) {
-                    timeState = TimeState.INIT
+                    saveWorkDay()
                     goToNextPomodoroType()
                 }
             }
@@ -101,24 +102,39 @@ class PomodoroManagerImpl(
     }
 
     private fun play() {
-        timeState = TimeState.PLAYING
         timer.play(getPlayTime(pomodoroStage))
+        workDay = WorkDay(
+            date = System.currentTimeMillis(),
+            typeOfPomodoro = pomodoroStage.type,
+            startTime = System.currentTimeMillis(),
+            endTime = 0
+        )
     }
 
     private fun pause() {
-        timeState = TimeState.PAUSED
         timer.pause()
     }
 
     private fun resume() {
-        timeState = TimeState.PLAYING
         timer.play(remainTime)
     }
 
-    private fun getPlayTime(type: PomodoroStage) = when (type) {
-        WORK -> WORK_TIME
-        BREAK -> BREAK_TIME
-        LONG_BREAK -> LONG_BREAK_TIME
+    private fun getPlayTime(type: PomodoroStage): Long {
+        return when (type) {
+            WORK -> WORK_TIME
+            BREAK -> BREAK_TIME
+            LONG_BREAK -> LONG_BREAK_TIME
+        }
+    }
+
+    private fun saveWorkDay() {
+        GlobalScope.launch {
+            workDay?.let {
+                workDay = it.copy(endTime = System.currentTimeMillis())
+                insertWorkDayUseCase.execute(workDay!!)
+                workDay = null
+            }
+        }
     }
 }
 

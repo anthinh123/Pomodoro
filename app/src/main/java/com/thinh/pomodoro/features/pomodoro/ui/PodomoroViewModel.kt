@@ -1,5 +1,6 @@
 package com.thinh.pomodoro.features.pomodoro.ui
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.thinh.pomodoro.features.pomodoro.ui.PomodoroContract.PomodoroEvent
 import com.thinh.pomodoro.features.pomodoro.ui.PomodoroContract.PomodoroEvent.PlayPauseEvent
@@ -10,30 +11,17 @@ import com.thinh.pomodoro.features.pomodoro.ui.PomodoroContract.PomodoroUiState
 import com.thinh.pomodoro.features.pomodoro.timer.TimeState
 import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroManager
 import com.thinh.pomodoro.features.pomodoro.usecase.getnumberofworks.GetCountOfWorksInRangeUseCase
-import com.thinh.pomodoro.features.pomodoro.usecase.insert.InsertWorkDayUseCase
 import com.thinh.pomodoro.mvi.BaseViewModel
 import com.thinh.pomodoro.utils.TimeUtil
 import kotlinx.coroutines.launch
 
 class PodomoroViewModel(
     private val pomodoroManager: PomodoroManager,
-    private val insertWorkDayUseCase: InsertWorkDayUseCase,
     private val getCountOfWorksInRangeUseCase: GetCountOfWorksInRangeUseCase,
 ) : BaseViewModel<PomodoroUiState, PomodoroEvent>() {
 
     init {
         viewModelScope.launch {
-
-            getCountOfWorksInRangeUseCase.execute(
-                pomodoroType = 0,
-                startDate = TimeUtil.getStartTimeOfCurrentDay(),
-                endDate = TimeUtil.getEndTimeOfCurrentDay()
-            ).collect { numberOfWorking ->
-                updateState {
-                    copy(numberOfWorking = numberOfWorking)
-                }
-            }
-
             pomodoroManager.podomoroUiState.collect { uiState ->
                 updateState {
                     copy(
@@ -41,6 +29,26 @@ class PodomoroViewModel(
                         displayTime = convertMillisToTime(uiState.remainTime),
                         timeState = uiState.timeState,
                     )
+                }
+
+                if (uiState.timeState == TimeState.FINISHED) {
+                    updateState {
+                        copy(
+                            playRingTone = true
+                        )
+                    }
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            getCountOfWorksInRangeUseCase.execute(
+                pomodoroType = 0,
+                startDate = TimeUtil.getStartTimeOfCurrentDay(),
+                endDate = TimeUtil.getEndTimeOfCurrentDay()
+            ).collect { numberOfWorking ->
+                updateState {
+                    copy(numberOfWorking = numberOfWorking)
                 }
             }
         }
@@ -60,9 +68,9 @@ class PodomoroViewModel(
             }
 
             PlayedRingtone -> {
-//                updateState {
-//                    copy(playRingtone = false)
-//                }
+                updateState {
+                    copy(playRingTone = false)
+                }
             }
 
             SkipStage -> {

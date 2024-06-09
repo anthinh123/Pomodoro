@@ -15,7 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.thinh.pomodoro.features.pomodoro.ui.PodomoroViewModel
-import com.thinh.pomodoro.features.pomodoro.ui.PomodoroScreen2
+import com.thinh.pomodoro.features.pomodoro.ui.PomodoroScreen
 import com.thinh.pomodoro.ui.theme.PomodoroColorScheme
 import com.thinh.pomodoro.ui.theme.PomodoroTheme
 import org.koin.androidx.compose.koinViewModel
@@ -59,7 +59,7 @@ fun PodomoroNavGraph(
     ) {
         composable(AppScreen.PODOMORO_SCREEN.route) {
             val viewModel: PodomoroViewModel = koinViewModel()
-            PomodoroScreen2(
+            PomodoroScreen(
                 updateColorScheme = { updateColorScheme(it) },
                 uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
                 onEvent = { viewModel.handleEvent(it) }
