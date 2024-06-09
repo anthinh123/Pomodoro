@@ -71,6 +71,7 @@ class PodomoroViewModel(
                 updateState {
                     copy(playRingTone = false)
                 }
+                pomodoroManager.goToNextPomodoroStage()
             }
 
             SkipStage -> {

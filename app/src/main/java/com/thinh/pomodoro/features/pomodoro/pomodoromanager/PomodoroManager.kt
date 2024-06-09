@@ -17,4 +17,5 @@ interface PomodoroManager {
     fun takeActionToTimer()
     fun skipPomodoro()
     fun resetPomodoro()
+    fun goToNextPomodoroStage()
 }

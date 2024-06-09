@@ -39,6 +39,7 @@ class TimerImpl : Timer {
         }
 
         override fun onFinish() {
+            Log.d("TimerImpl", "onFinish")
             _timerUiState.update {
                 it.copy(
                     remainTime = 0,
@@ -58,6 +59,7 @@ class TimerImpl : Timer {
     }
 
     override fun stop() {
+        Log.d("TimerImpl", "stop")
         timer?.cancel()
         _timerUiState.update {
             it.copy(

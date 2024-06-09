@@ -60,26 +60,7 @@ class PomodoroManagerImpl(
         timer.initTime(getPlayTime(pomodoroStage))
     }
 
-    private fun startObserverTimer() {
-        GlobalScope.launch {
-            timer.timerUiState.collect { timerState ->
-                remainTime = timerState.remainTime
-                _podomoroUiState.update {
-                    it.copy(
-                        remainTime = remainTime,
-                        timeState = timerState.state
-                    )
-                }
-
-                if (timerState.state == TimeState.FINISHED) {
-                    saveWorkDay()
-                    goToNextPomodoroType()
-                }
-            }
-        }
-    }
-
-    private fun goToNextPomodoroType() {
+    override fun goToNextPomodoroStage() {
         when (pomodoroStage) {
             WORK -> {
                 numberOfWorkings++
@@ -90,14 +71,25 @@ class PomodoroManagerImpl(
 
             LONG_BREAK -> pomodoroStage = WORK
         }
-
         timer.initTime(getPlayTime(pomodoroStage))
+    }
 
-        _podomoroUiState.update {
-            it.copy(
-                pomodoroStage = pomodoroStage,
-                numberOfWorking = numberOfWorkings,
-            )
+    private fun startObserverTimer() {
+        GlobalScope.launch {
+            timer.timerUiState.collect { timerState ->
+                remainTime = timerState.remainTime
+                _podomoroUiState.update {
+                    it.copy(
+                        remainTime = remainTime,
+                        timeState = timerState.state,
+                        pomodoroStage = pomodoroStage,
+                    )
+                }
+
+                if (timerState.state == TimeState.FINISHED) {
+                    saveWorkDay()
+                }
+            }
         }
     }
 
@@ -142,5 +134,4 @@ data class PodomoroUiState(
     val pomodoroStage: PomodoroStage = WORK,
     val remainTime: Long,
     val timeState: TimeState = TimeState.INIT,
-    val numberOfWorking: Int = 0,
 )

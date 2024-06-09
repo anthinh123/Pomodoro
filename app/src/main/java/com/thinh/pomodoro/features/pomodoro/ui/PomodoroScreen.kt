@@ -71,7 +71,7 @@ fun PomodoroScreen(
     }
 
     LaunchedEffect(uiState.playRingTone) {
-        if (uiState.playRingTone) {
+        if (uiState.playRingTone == true) {
             media.start()
             onEvent(PomodoroContract.PomodoroEvent.PlayedRingtone)
         }
