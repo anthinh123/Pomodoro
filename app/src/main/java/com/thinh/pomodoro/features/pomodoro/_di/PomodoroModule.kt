@@ -24,7 +24,14 @@ val pomodoroModule = module {
     single<InsertWorkDayUseCase> { InsertWorkDayUseCaseImpl(get(), get()) }
     single<GetWorkDaysInRangeUseCase> { GetWorkDaysInRangeUseCaseImpl(get(), get()) }
     single<GetCountOfWorksInRangeUseCase> { GetCountOfWorksInRangeUseCaseImpl(get()) }
-    single<PomodoroManager> { PomodoroManagerImpl(Dispatchers.Default, get(), get()) }
+    single<PomodoroManager> {
+        PomodoroManagerImpl(
+            defaultDispatcher = Dispatchers.Default,
+            ioDispatcher = Dispatchers.IO,
+            timer = get(),
+            insertWorkDayUseCase = get()
+        )
+    }
     single<PomodoroDatabase> {
         Room.databaseBuilder(
             androidApplication(),
