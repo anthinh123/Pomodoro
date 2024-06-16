@@ -56,7 +56,7 @@ import com.thinh.pomodoro.utils.AutoSizeText
 fun PomodoroScreen(
     uiState: PomodoroContract.PomodoroUiState,
     onEvent: (PomodoroContract.PomodoroEvent) -> Unit,
-    updateColorScheme: (PomodoroColorScheme) -> Unit
+    updateColorScheme: (PomodoroColorScheme) -> Unit,
 ) {
     val context = LocalContext.current
     val media: MediaPlayer = remember {
@@ -70,8 +70,8 @@ fun PomodoroScreen(
         }
     }
 
-    LaunchedEffect(uiState.playRingTone) {
-        if (uiState.playRingTone == true) {
+    LaunchedEffect(uiState.timeState) {
+        if (uiState.timeState == TimeState.FINISHED) {
             media.start()
             onEvent(PomodoroContract.PomodoroEvent.PlayedRingtone)
         }
@@ -236,7 +236,7 @@ private fun Header(
     icon: Int,
     title: String,
     primaryColor: Color,
-    secondaryColor: Color
+    secondaryColor: Color,
 ) {
     Card(
         shape = RoundedCornerShape(8.dp),

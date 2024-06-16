@@ -15,7 +15,7 @@ import com.thinh.pomodoro.mvi.BaseViewModel
 import com.thinh.pomodoro.utils.TimeUtil
 import kotlinx.coroutines.launch
 
-class PodomoroViewModel(
+class PomodoroViewModel(
     private val pomodoroManager: PomodoroManager,
     private val getCountOfWorksInRangeUseCase: GetCountOfWorksInRangeUseCase,
 ) : BaseViewModel<PomodoroUiState, PomodoroEvent>() {
@@ -29,14 +29,6 @@ class PodomoroViewModel(
                         displayTime = convertMillisToTime(uiState.remainTime),
                         timeState = uiState.timeState,
                     )
-                }
-
-                if (uiState.timeState == TimeState.FINISHED) {
-                    updateState {
-                        copy(
-                            playRingTone = true
-                        )
-                    }
                 }
             }
         }
@@ -68,9 +60,6 @@ class PodomoroViewModel(
             }
 
             PlayedRingtone -> {
-                updateState {
-                    copy(playRingTone = false)
-                }
                 pomodoroManager.goToNextPomodoroStage()
             }
 

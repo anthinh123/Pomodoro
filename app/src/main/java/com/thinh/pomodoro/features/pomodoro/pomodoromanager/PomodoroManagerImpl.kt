@@ -17,14 +17,14 @@ class PomodoroManagerImpl(
     private val timer: Timer,
     private val insertWorkDayUseCase: InsertWorkDayUseCase,
 ) : PomodoroManager {
+
     private var pomodoroStage: PomodoroStage = WORK
     private var remainTime: Long = 0
     private var workDay: WorkDay? = null
+    private var numberOfWorkings: Int = 0
 
     private val _podomoroUiState = MutableStateFlow(PodomoroUiState(remainTime = remainTime))
     override val podomoroUiState: StateFlow<PodomoroUiState> = _podomoroUiState
-
-    private var numberOfWorkings: Int = 0
 
     init {
         timer.initTime(getPlayTime(pomodoroStage))
@@ -129,9 +129,3 @@ class PomodoroManagerImpl(
         }
     }
 }
-
-data class PodomoroUiState(
-    val pomodoroStage: PomodoroStage = WORK,
-    val remainTime: Long,
-    val timeState: TimeState = TimeState.INIT,
-)

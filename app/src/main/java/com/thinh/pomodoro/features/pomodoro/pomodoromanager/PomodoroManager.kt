@@ -1,15 +1,15 @@
 package com.thinh.pomodoro.features.pomodoro.pomodoromanager
 
+import com.thinh.pomodoro.features.pomodoro.timer.TimeState
 import kotlinx.coroutines.flow.StateFlow
-
 
 enum class PomodoroStage(val type: Int) {
     WORK(0), BREAK(1), LONG_BREAK(2)
 }
 
-const val WORK_TIME = 1 * 10L
-const val BREAK_TIME = 1 * 10L
-const val LONG_BREAK_TIME = 1 * 10L
+const val WORK_TIME = 3L
+const val BREAK_TIME = 3L
+const val LONG_BREAK_TIME = 3L
 
 interface PomodoroManager {
     val podomoroUiState: StateFlow<PodomoroUiState>
@@ -19,3 +19,9 @@ interface PomodoroManager {
     fun resetPomodoro()
     fun goToNextPomodoroStage()
 }
+
+data class PodomoroUiState(
+    val pomodoroStage: PomodoroStage = PomodoroStage.WORK,
+    val remainTime: Long,
+    val timeState: TimeState = TimeState.INIT,
+)
