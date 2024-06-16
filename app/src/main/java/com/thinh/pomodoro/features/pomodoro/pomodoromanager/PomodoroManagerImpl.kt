@@ -7,13 +7,16 @@ import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroStage.BREAK
 import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroStage.LONG_BREAK
 import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroStage.WORK
 import com.thinh.pomodoro.features.pomodoro.usecase.insert.InsertWorkDayUseCase
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class PomodoroManagerImpl(
+    private val defaultDispatcher: CoroutineDispatcher,
+    private val ioDispatcher: CoroutineDispatcher,
     private val timer: Timer,
     private val insertWorkDayUseCase: InsertWorkDayUseCase,
 ) : PomodoroManager {
@@ -75,7 +78,7 @@ class PomodoroManagerImpl(
     }
 
     private fun startObserverTimer() {
-        GlobalScope.launch {
+        CoroutineScope(defaultDispatcher).launch {
             timer.timerUiState.collect { timerState ->
                 remainTime = timerState.remainTime
                 _podomoroUiState.update {
@@ -120,7 +123,7 @@ class PomodoroManagerImpl(
     }
 
     private fun saveWorkDay() {
-        GlobalScope.launch {
+        CoroutineScope(ioDispatcher).launch {
             workDay?.let {
                 workDay = it.copy(endTime = System.currentTimeMillis())
                 insertWorkDayUseCase.execute(workDay!!)

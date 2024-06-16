@@ -14,6 +14,7 @@ import com.thinh.pomodoro.features.pomodoro.usecase.getworkdayinrange.GetWorkDay
 import com.thinh.pomodoro.features.pomodoro.usecase.getworkdayinrange.GetWorkDaysInRangeUseCase
 import com.thinh.pomodoro.features.pomodoro.usecase.insert.InsertWorkDayUseCase
 import com.thinh.pomodoro.features.pomodoro.usecase.insert.InsertWorkDayUseCaseImpl
+import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 
@@ -23,7 +24,7 @@ val pomodoroModule = module {
     single<InsertWorkDayUseCase> { InsertWorkDayUseCaseImpl(get(), get()) }
     single<GetWorkDaysInRangeUseCase> { GetWorkDaysInRangeUseCaseImpl(get(), get()) }
     single<GetCountOfWorksInRangeUseCase> { GetCountOfWorksInRangeUseCaseImpl(get()) }
-    single<PomodoroManager> { PomodoroManagerImpl(get(), get()) }
+    single<PomodoroManager> { PomodoroManagerImpl(Dispatchers.Default, get(), get()) }
     single<PomodoroDatabase> {
         Room.databaseBuilder(
             androidApplication(),

@@ -33,7 +33,6 @@ class TimerImpl : Timer {
 
     private fun createCountDownTimer(time: Long) = object : CountDownTimer(time * 1000, 1000) {
         override fun onTick(millisUntilFinished: Long) {
-            Log.d("thinhav", "onTick: ${millisUntilFinished / 1000}")
             _timerUiState.update {
                 it.copy(remainTime = millisUntilFinished / 1000)
             }
