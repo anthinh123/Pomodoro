@@ -1,6 +1,5 @@
 package com.thinh.pomodoro.features.pomodoro.ui
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.thinh.pomodoro.features.pomodoro.ui.PomodoroContract.PomodoroEvent
 import com.thinh.pomodoro.features.pomodoro.ui.PomodoroContract.PomodoroEvent.PlayPauseEvent
