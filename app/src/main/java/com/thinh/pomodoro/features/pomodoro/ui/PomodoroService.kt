@@ -7,6 +7,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
@@ -37,6 +38,8 @@ class PomodoroService(
 
     private val pomodoroManager: PomodoroManager by inject()
 
+    private lateinit var media: MediaPlayer
+
     private lateinit var collectPomodoroUiStateJob: Job
 
     private lateinit var stopPendingIntent: PendingIntent
@@ -45,6 +48,7 @@ class PomodoroService(
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
         super.onCreate()
+        media = MediaPlayer.create(this, R.raw.school_bell)
 
         val stopIntent = Intent(this, PomodoroService::class.java)
         stopIntent.action = PomodoroAction.STOP.name
@@ -68,6 +72,11 @@ class PomodoroService(
             pomodoroManager.podomoroUiState.collect {
                 val displayTime: String = convertMillisToTime(it.remainTime)
                 updateNotificationTime(displayTime, it.timeState == TimeState.PLAYING)
+
+                if (it.timeState == TimeState.FINISHED) {
+                    media.start()
+                    pomodoroManager.goToNextPomodoroStage()
+                }
             }
         }
     }
@@ -99,6 +108,8 @@ class PomodoroService(
 
     override fun onDestroy() {
         collectPomodoroUiStateJob.cancel()
+        media.stop()
+        media.release()
         super.onDestroy()
     }
 
@@ -112,7 +123,7 @@ class PomodoroService(
 
     private fun createNotification(
         notificationLayout: RemoteViews,
-        isRunning: Boolean = false
+        isRunning: Boolean = false,
     ): Notification {
         val notificationChannelId = "POMODORO_CHANNEL_ID"
         val notificationChannelName = "Pomodoro Timer"
