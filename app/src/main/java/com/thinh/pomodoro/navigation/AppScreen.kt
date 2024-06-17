@@ -4,6 +4,7 @@ import androidx.navigation.NavHostController
 
 enum class AppScreen(val route: String) {
     PODOMORO_SCREEN("podomoro_screen"),
+    SETTING_SCREEN("setting_screen"),
 }
 
 class AppActions(private val navController: NavHostController) {

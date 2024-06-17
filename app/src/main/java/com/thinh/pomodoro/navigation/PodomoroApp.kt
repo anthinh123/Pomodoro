@@ -16,6 +16,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.thinh.pomodoro.features.pomodoro.ui.PomodoroViewModel
 import com.thinh.pomodoro.features.pomodoro.ui.PomodoroScreen
+import com.thinh.pomodoro.features.settings.ui.SettingScreen
+import com.thinh.pomodoro.features.settings.ui.SettingViewModel
 import com.thinh.pomodoro.ui.theme.PomodoroColorScheme
 import com.thinh.pomodoro.ui.theme.PomodoroTheme
 import org.koin.androidx.compose.koinViewModel
@@ -50,7 +52,7 @@ fun PodomoroNavGraph(
     updateColorScheme: (PomodoroColorScheme) -> Unit,
     navController: NavHostController,
     navActions: AppActions,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     NavHost(
         navController = navController,
@@ -62,7 +64,18 @@ fun PodomoroNavGraph(
             PomodoroScreen(
                 updateColorScheme = { updateColorScheme(it) },
                 uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
-                onEvent = { viewModel.handleEvent(it) }
+                onEvent = { viewModel.handleEvent(it) },
+                navigateToSettingScreen = { navController.navigate(AppScreen.SETTING_SCREEN.route) },
+            )
+        }
+
+        composable(AppScreen.SETTING_SCREEN.route) {
+            val viewModel: SettingViewModel = koinViewModel()
+            SettingScreen(
+                updateColorScheme = { updateColorScheme(it) },
+                uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
+                onEvent = { viewModel.handleEvent(it) },
+                onBack = { navController.popBackStack() },
             )
         }
     }

@@ -8,6 +8,7 @@ import com.thinh.pomodoro.features.pomodoro.timer.TimerImpl
 import com.thinh.pomodoro.features.pomodoro.data.WorkDayMapper
 import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroManager
 import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroManagerImpl
+import com.thinh.pomodoro.features.pomodoro.ui.PomodoroViewModel
 import com.thinh.pomodoro.features.pomodoro.usecase.getnumberofworks.GetCountOfWorksInRangeUseCase
 import com.thinh.pomodoro.features.pomodoro.usecase.getnumberofworks.GetCountOfWorksInRangeUseCaseImpl
 import com.thinh.pomodoro.features.pomodoro.usecase.getworkdayinrange.GetWorkDaysInRangeUseCaseImpl
@@ -16,9 +17,11 @@ import com.thinh.pomodoro.features.pomodoro.usecase.insert.InsertWorkDayUseCase
 import com.thinh.pomodoro.features.pomodoro.usecase.insert.InsertWorkDayUseCaseImpl
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidApplication
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val pomodoroModule = module {
+    viewModel { PomodoroViewModel(get(), get()) }
     single<Timer> { TimerImpl() }
     single<WorkDayMapper> { WorkDayMapper() }
     single<InsertWorkDayUseCase> { InsertWorkDayUseCaseImpl(get(), get()) }

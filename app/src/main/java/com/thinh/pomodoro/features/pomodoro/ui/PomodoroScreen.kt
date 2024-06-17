@@ -69,6 +69,7 @@ fun PomodoroScreen(
     uiState: PomodoroContract.PomodoroUiState,
     onEvent: (PomodoroContract.PomodoroEvent) -> Unit,
     updateColorScheme: (PomodoroColorScheme) -> Unit,
+    navigateToSettingScreen: () -> Unit,
 ) {
     val context = LocalContext.current
     val media: MediaPlayer = remember {
@@ -116,12 +117,14 @@ fun PomodoroScreen(
     ) {
 
         Column(
-            modifier = Modifier.weight(1f).fillMaxWidth(),
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.End
         ) {
             IconButton(
                 modifier = Modifier.padding(end = 16.dp),
-                onClick = { /* do something */ }
+                onClick = { navigateToSettingScreen() }
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Settings,
@@ -319,7 +322,8 @@ fun PodomoroScreen2Preview() {
                         "00",
                 timeState = TimeState.INIT,
             ),
-            onEvent = {}
+            onEvent = {},
+            navigateToSettingScreen = {}
         )
     }
 }
@@ -336,7 +340,8 @@ fun PodomoroScreen2Preview2() {
                 displayTime = "25\n00",
                 timeState = TimeState.INIT,
             ),
-            onEvent = {}
+            onEvent = {},
+            navigateToSettingScreen = {}
         )
     }
 }
