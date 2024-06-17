@@ -11,6 +11,10 @@ const val WORK_TIME = 25 * 60L
 const val BREAK_TIME = 5 * 60L
 const val LONG_BREAK_TIME = 15 * 60L
 
+//const val WORK_TIME = 5L
+//const val BREAK_TIME = 5L
+//const val LONG_BREAK_TIME = 5L
+
 interface PomodoroManager {
     val podomoroUiState: StateFlow<PodomoroUiState>
 

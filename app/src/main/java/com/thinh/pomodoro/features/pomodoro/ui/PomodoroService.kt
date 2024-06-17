@@ -11,11 +11,12 @@ import android.media.MediaPlayer
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.os.PowerManager
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.thinh.pomodoro.R
-import com.thinh.pomodoro.features.pomodoro.timer.TimeState
 import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroManager
+import com.thinh.pomodoro.features.pomodoro.timer.TimeState
 import com.thinh.pomodoro.utils.TimeUtil.convertMillisToTime
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -23,6 +24,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+
 
 enum class PomodoroAction {
     START,
@@ -44,6 +46,7 @@ class PomodoroService(
 
     private lateinit var stopPendingIntent: PendingIntent
     private lateinit var pomodoroPendingIntent: PendingIntent
+    private lateinit var wakeLock: PowerManager.WakeLock
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
@@ -74,6 +77,7 @@ class PomodoroService(
                 updateNotificationTime(displayTime, it.timeState == TimeState.PLAYING)
 
                 if (it.timeState == TimeState.FINISHED) {
+                    turnOnScreenIfNeeded()
                     media.start()
                     pomodoroManager.goToNextPomodoroStage()
                 }
@@ -110,6 +114,9 @@ class PomodoroService(
         collectPomodoroUiStateJob.cancel()
         media.stop()
         media.release()
+        if (wakeLock.isHeld) {
+            wakeLock.release()
+        }
         super.onDestroy()
     }
 
@@ -168,6 +175,21 @@ class PomodoroService(
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notification = createNotification(notificationLayout, isRunning)
         notificationManager.notify(POMODORO_CHANNEL_ID, notification)
+    }
+
+    private fun turnOnScreenIfNeeded(){
+        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+        wakeLock = powerManager.newWakeLock(
+            PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
+            "PomodoroApp::PomodoroWakeLock"
+        )
+
+        //acquire will turn on the display
+        wakeLock.acquire(1)
+
+
+        //release will release the lock from CPU, in case of that, screen will go back to sleep mode in defined time bt device settings
+        wakeLock.release()
     }
 
 }
