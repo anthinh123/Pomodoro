@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.koin.androidx.compose)
     implementation ("androidx.room:room-runtime:2.6.1")
     implementation("androidx.datastore:datastore-preferences-core:1.1.1")
+    implementation ("androidx.datastore:datastore-preferences:1.1.1")
     kapt("androidx.room:room-compiler:2.6.1")
 
     // optional - Kotlin Extensions and Coroutines support for Room

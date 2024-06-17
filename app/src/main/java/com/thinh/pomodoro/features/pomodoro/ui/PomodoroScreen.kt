@@ -313,7 +313,8 @@ private fun getHeaderIcon(pomodoroStage: PomodoroStage): Int {
 @Composable
 fun PodomoroScreen2Preview() {
     PomodoroTheme(
-        pomodoroColorScheme = PomodoroColorScheme.WORKING_COLOR
+        pomodoroColorScheme = PomodoroColorScheme.WORKING_COLOR,
+        darkMode = false
     ) {
         PomodoroScreen(
             updateColorScheme = {},
@@ -332,7 +333,8 @@ fun PodomoroScreen2Preview() {
 @Composable
 fun PodomoroScreen2Preview2() {
     PomodoroTheme(
-        pomodoroColorScheme = PomodoroColorScheme.SHORT_BREAK_COLOR
+        pomodoroColorScheme = PomodoroColorScheme.SHORT_BREAK_COLOR,
+        darkMode = true
     ) {
         PomodoroScreen(
             updateColorScheme = {},

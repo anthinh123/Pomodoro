@@ -25,7 +25,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
-
 enum class PomodoroAction {
     START,
     POMODORO_ACTION,

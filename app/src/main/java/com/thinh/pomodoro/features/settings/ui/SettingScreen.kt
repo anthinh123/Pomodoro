@@ -14,6 +14,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -25,6 +26,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.thinh.pomodoro.common.AppScaffold
+import com.thinh.pomodoro.features.settings.ui.SettingContract.SettingEvent.IsDarkModeChanged
+import com.thinh.pomodoro.features.settings.ui.SettingContract.SettingEvent.LongBreakTimeChanged
+import com.thinh.pomodoro.features.settings.ui.SettingContract.SettingEvent.ShortBreakTimeChanged
+import com.thinh.pomodoro.features.settings.ui.SettingContract.SettingEvent.WorkTimeChanged
 import com.thinh.pomodoro.ui.theme.PomodoroColorScheme
 import com.thinh.pomodoro.ui.theme.PomodoroTheme
 
@@ -32,7 +37,7 @@ import com.thinh.pomodoro.ui.theme.PomodoroTheme
 fun SettingScreen(
     uiState: SettingContract.SettingUiState,
     onEvent: (SettingContract.SettingEvent) -> Unit,
-    updateColorScheme: (PomodoroColorScheme) -> Unit,
+    updateDarkMode: (Boolean) -> Unit,
     onBack: () -> Unit,
 ) {
 
@@ -40,6 +45,23 @@ fun SettingScreen(
     var shortBreakTime by remember { mutableIntStateOf(uiState.shortBreakTime) }
     var longBreakTime by remember { mutableIntStateOf(uiState.longBreakTime) }
     var darkMode by remember { mutableStateOf(uiState.isDarkMode) }
+
+    LaunchedEffect(uiState.isDarkMode) {
+        darkMode = uiState.isDarkMode
+        updateDarkMode.invoke(uiState.isDarkMode)
+    }
+
+    LaunchedEffect(uiState.workTime) {
+        workTime = uiState.workTime
+    }
+
+    LaunchedEffect(uiState.shortBreakTime) {
+        shortBreakTime = uiState.shortBreakTime
+    }
+
+    LaunchedEffect(uiState.longBreakTime) {
+        longBreakTime = uiState.longBreakTime
+    }
 
     AppScaffold(
         title = "Setting",
@@ -66,7 +88,9 @@ fun SettingScreen(
 
                 Switch(
                     checked = darkMode,
-                    onCheckedChange = { darkMode = it },
+                    onCheckedChange = {
+                        onEvent(IsDarkModeChanged(it))
+                    },
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = MaterialTheme.colorScheme.primary,
                         checkedTrackColor = MaterialTheme.colorScheme.secondary,
@@ -77,20 +101,29 @@ fun SettingScreen(
 
             PomodoroSettingItem(
                 title = "Work time",
-                sliderDefaultValue = workTime,
-                onSliderChanged = { workTime = it }
+                sliderValue = workTime,
+                onSliderChanged = { workTime = it },
+                onValueChangeFinished = {
+                    onEvent(WorkTimeChanged(it))
+                }
             )
 
             PomodoroSettingItem(
                 title = "Short break time",
-                sliderDefaultValue = shortBreakTime,
-                onSliderChanged = { shortBreakTime = it }
+                sliderValue = shortBreakTime,
+                onSliderChanged = { shortBreakTime = it },
+                onValueChangeFinished = {
+                    onEvent(ShortBreakTimeChanged(it))
+                }
             )
 
             PomodoroSettingItem(
                 title = "Long break time",
-                sliderDefaultValue = longBreakTime,
-                onSliderChanged = { longBreakTime = it }
+                sliderValue = longBreakTime,
+                onSliderChanged = { longBreakTime = it },
+                onValueChangeFinished = {
+                    onEvent(LongBreakTimeChanged(it))
+                }
             )
         }
     }
@@ -100,10 +133,15 @@ fun SettingScreen(
 @Composable
 private fun PomodoroSettingItem(
     title: String,
-    sliderDefaultValue: Int,
+    sliderValue: Int,
     onSliderChanged: (Int) -> Unit,
+    onValueChangeFinished: (Int) -> Unit,
 ) {
-    var sliderPosition by remember { mutableFloatStateOf(sliderDefaultValue.toFloat()) }
+    var sliderPosition by remember { mutableFloatStateOf(sliderValue.toFloat()) }
+
+    LaunchedEffect(sliderValue) {
+        sliderPosition = sliderValue.toFloat()
+    }
     Column(
         modifier = Modifier.padding(vertical = 8.dp)
     ) {
@@ -121,10 +159,13 @@ private fun PomodoroSettingItem(
         }
 
         Slider(
-            value = sliderPosition,
+            value = sliderValue.toFloat(),
             onValueChange = {
                 sliderPosition = it
                 onSliderChanged.invoke(it.toInt())
+            },
+            onValueChangeFinished = {
+                onValueChangeFinished.invoke(sliderPosition.toInt())
             },
             colors = SliderDefaults.colors(
                 thumbColor = MaterialTheme.colorScheme.primary,
@@ -140,7 +181,8 @@ private fun PomodoroSettingItem(
 @Composable
 fun SettingScreenPreview() {
     PomodoroTheme(
-        pomodoroColorScheme = PomodoroColorScheme.SHORT_BREAK_COLOR
+        pomodoroColorScheme = PomodoroColorScheme.SHORT_BREAK_COLOR,
+        darkMode = false
     ) {
         SettingScreen(
             uiState = SettingContract.SettingUiState(
@@ -150,7 +192,7 @@ fun SettingScreenPreview() {
                 isDarkMode = false
             ),
             onEvent = {},
-            updateColorScheme = {},
+            updateDarkMode = {},
             onBack = {}
         )
     }

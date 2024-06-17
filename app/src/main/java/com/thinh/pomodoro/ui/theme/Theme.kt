@@ -115,11 +115,11 @@ private val LongBreakDarkColors = darkColorScheme(
 
 @Composable
 fun PomodoroTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkMode: Boolean,
     pomodoroColorScheme: PomodoroColorScheme,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) {
+    val colorScheme = if (!darkMode) {
         when (pomodoroColorScheme) {
             PomodoroColorScheme.WORKING_COLOR -> WorkingLightColors
             PomodoroColorScheme.SHORT_BREAK_COLOR -> ShortBreakLightColors
