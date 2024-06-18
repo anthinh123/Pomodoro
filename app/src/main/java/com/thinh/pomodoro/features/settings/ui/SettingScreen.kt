@@ -44,12 +44,12 @@ fun SettingScreen(
     var workTime by remember { mutableIntStateOf(uiState.workTime) }
     var shortBreakTime by remember { mutableIntStateOf(uiState.shortBreakTime) }
     var longBreakTime by remember { mutableIntStateOf(uiState.longBreakTime) }
-    var darkMode by remember { mutableStateOf(uiState.isDarkMode) }
-
-    LaunchedEffect(uiState.isDarkMode) {
-        darkMode = uiState.isDarkMode
-        updateDarkMode.invoke(uiState.isDarkMode)
-    }
+//    var darkMode by remember { mutableStateOf(uiState.isDarkMode) }
+//
+//    LaunchedEffect(uiState.isDarkMode) {
+//        darkMode = uiState.isDarkMode
+//        updateDarkMode.invoke(uiState.isDarkMode)
+//    }
 
     LaunchedEffect(uiState.workTime) {
         workTime = uiState.workTime
@@ -75,29 +75,29 @@ fun SettingScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            Row(
-                modifier = Modifier.padding(vertical = 8.dp),
-                verticalAlignment = CenterVertically
-            ) {
-                Text(
-                    text = "Dark mode",
-                    color = MaterialTheme.colorScheme.primary
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                Switch(
-                    checked = darkMode,
-                    onCheckedChange = {
-                        onEvent(IsDarkModeChanged(it))
-                    },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = MaterialTheme.colorScheme.primary,
-                        checkedTrackColor = MaterialTheme.colorScheme.secondary,
-                        checkedBorderColor = MaterialTheme.colorScheme.primary,
-                    )
-                )
-            }
+//            Row(
+//                modifier = Modifier.padding(vertical = 8.dp),
+//                verticalAlignment = CenterVertically
+//            ) {
+//                Text(
+//                    text = "Dark mode",
+//                    color = MaterialTheme.colorScheme.primary
+//                )
+//
+//                Spacer(modifier = Modifier.weight(1f))
+//
+//                Switch(
+//                    checked = darkMode,
+//                    onCheckedChange = {
+//                        onEvent(IsDarkModeChanged(it))
+//                    },
+//                    colors = SwitchDefaults.colors(
+//                        checkedThumbColor = MaterialTheme.colorScheme.primary,
+//                        checkedTrackColor = MaterialTheme.colorScheme.secondary,
+//                        checkedBorderColor = MaterialTheme.colorScheme.primary,
+//                    )
+//                )
+//            }
 
             PomodoroSettingItem(
                 title = "Work time",
@@ -175,7 +175,6 @@ private fun PomodoroSettingItem(
         )
     }
 }
-
 
 @Preview(device = "spec:width=2640px,height=1080px,dpi=480,orientation=portrait")
 @Composable

@@ -32,7 +32,8 @@ val pomodoroModule = module {
             defaultDispatcher = Dispatchers.Default,
             ioDispatcher = Dispatchers.IO,
             timer = get(),
-            insertWorkDayUseCase = get()
+            insertWorkDayUseCase = get(),
+            getSettingsUseCase = get()
         )
     }
     single<PomodoroDatabase> {

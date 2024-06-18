@@ -7,6 +7,7 @@ import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroStage.BREAK
 import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroStage.LONG_BREAK
 import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroStage.WORK
 import com.thinh.pomodoro.features.pomodoro.usecase.insert.InsertWorkDayUseCase
+import com.thinh.pomodoro.features.settings.usecase.getsettings.GetSettingsUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,17 +20,22 @@ class PomodoroManagerImpl(
     private val ioDispatcher: CoroutineDispatcher,
     private val timer: Timer,
     private val insertWorkDayUseCase: InsertWorkDayUseCase,
+    private val getSettingsUseCase: GetSettingsUseCase,
 ) : PomodoroManager {
 
     private var pomodoroStage: PomodoroStage = WORK
     private var remainTime: Long = 0
     private var workDay: WorkDay? = null
     private var numberOfWorkings: Int = 0
+    private var workTime: Long = WORK_TIME
+    private var breakTime: Long = BREAK_TIME
+    private var longBreakTime: Long = LONG_BREAK_TIME
 
     private val _podomoroUiState = MutableStateFlow(PodomoroUiState(remainTime = remainTime))
     override val podomoroUiState: StateFlow<PodomoroUiState> = _podomoroUiState
 
     init {
+        loadSettings()
         timer.initTime(getPlayTime(pomodoroStage))
         startObserverTimer()
     }
@@ -77,6 +83,16 @@ class PomodoroManagerImpl(
         timer.initTime(getPlayTime(pomodoroStage))
     }
 
+    private fun loadSettings() {
+        CoroutineScope(ioDispatcher).launch {
+            getSettingsUseCase.execute().collect { settings ->
+                workTime = settings.workTime * 60L
+                breakTime = settings.shortBreakTime * 60L
+                longBreakTime = settings.longBreakTime * 60L
+            }
+        }
+    }
+
     private fun startObserverTimer() {
         CoroutineScope(defaultDispatcher).launch {
             timer.timerUiState.collect { timerState ->
@@ -116,9 +132,9 @@ class PomodoroManagerImpl(
 
     private fun getPlayTime(type: PomodoroStage): Long {
         return when (type) {
-            WORK -> WORK_TIME
-            BREAK -> BREAK_TIME
-            LONG_BREAK -> LONG_BREAK_TIME
+            WORK -> workTime
+            BREAK -> breakTime
+            LONG_BREAK -> longBreakTime
         }
     }
 

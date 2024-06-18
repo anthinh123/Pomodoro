@@ -113,9 +113,6 @@ class PomodoroService(
         collectPomodoroUiStateJob.cancel()
         media.stop()
         media.release()
-        if (wakeLock.isHeld) {
-            wakeLock.release()
-        }
         super.onDestroy()
     }
 
@@ -176,7 +173,7 @@ class PomodoroService(
         notificationManager.notify(POMODORO_CHANNEL_ID, notification)
     }
 
-    private fun turnOnScreenIfNeeded(){
+    private fun turnOnScreenIfNeeded() {
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
         wakeLock = powerManager.newWakeLock(
             PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
