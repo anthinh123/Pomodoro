@@ -7,17 +7,20 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
 import android.media.MediaPlayer
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
 import android.widget.RemoteViews
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.thinh.pomodoro.R
 import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroManager
 import com.thinh.pomodoro.features.pomodoro.timer.TimeState
 import com.thinh.pomodoro.utils.TimeUtil.convertMillisToTime
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -70,7 +73,7 @@ class PomodoroService(
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        collectPomodoroUiStateJob = GlobalScope.launch(Dispatchers.Main) {
+        collectPomodoroUiStateJob = CoroutineScope(Dispatchers.Default).launch(Dispatchers.Main) {
             pomodoroManager.podomoroUiState.collect {
                 val displayTime: String = convertMillisToTime(it.remainTime)
                 updateNotificationTime(displayTime, it.timeState == TimeState.PLAYING)
@@ -84,15 +87,30 @@ class PomodoroService(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val action = intent?.action?.let { PomodoroAction.valueOf(it) }
         when (action) {
             PomodoroAction.START -> {
                 val notificationLayout = RemoteViews(packageName, R.layout.pomodoro_notification)
-                startForeground(
-                    POMODORO_CHANNEL_ID,
-                    createNotification(notificationLayout = notificationLayout, isRunning = true)
-                )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    startForeground(
+                        POMODORO_CHANNEL_ID,
+                        createNotification(
+                            notificationLayout = notificationLayout,
+                            isRunning = true
+                        ),
+                        FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+                    )
+                } else {
+                    startForeground(
+                        POMODORO_CHANNEL_ID,
+                        createNotification(
+                            notificationLayout = notificationLayout,
+                            isRunning = true
+                        ),
+                    )
+                }
             }
 
             PomodoroAction.POMODORO_ACTION -> {
@@ -179,12 +197,7 @@ class PomodoroService(
             PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
             "PomodoroApp::PomodoroWakeLock"
         )
-
-        //acquire will turn on the display
         wakeLock.acquire(1)
-
-
-        //release will release the lock from CPU, in case of that, screen will go back to sleep mode in defined time bt device settings
         wakeLock.release()
     }
 
