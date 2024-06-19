@@ -54,6 +54,7 @@ class PomodoroViewModel(
 
     override fun handleEvent(event: PomodoroEvent) {
         when (event) {
+
             PlayPauseEvent -> {
                 playPause()
             }

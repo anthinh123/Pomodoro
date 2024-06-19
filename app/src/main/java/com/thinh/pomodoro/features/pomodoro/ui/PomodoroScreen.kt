@@ -5,11 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Build
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,22 +16,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -53,21 +44,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
-import androidx.room.util.TableInfo
 import com.thinh.pomodoro.R
+import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroStage
+import com.thinh.pomodoro.features.pomodoro.timer.TimeState
+import com.thinh.pomodoro.features.pomodoro.ui.PomodoroContract.*
 import com.thinh.pomodoro.features.pomodoro.ui.PomodoroContract.PomodoroEvent.PlayPauseEvent
 import com.thinh.pomodoro.features.pomodoro.ui.PomodoroContract.PomodoroEvent.ResetTime
 import com.thinh.pomodoro.features.pomodoro.ui.PomodoroContract.PomodoroEvent.SkipStage
-import com.thinh.pomodoro.features.pomodoro.timer.TimeState
-import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroStage
 import com.thinh.pomodoro.ui.theme.PomodoroColorScheme
 import com.thinh.pomodoro.ui.theme.PomodoroTheme
 import com.thinh.pomodoro.utils.AutoSizeText
 
 @Composable
 fun PomodoroScreen(
-    uiState: PomodoroContract.PomodoroUiState,
-    onEvent: (PomodoroContract.PomodoroEvent) -> Unit,
+    uiState: PomodoroUiState,
+    onEvent: (PomodoroEvent) -> Unit,
     updateColorScheme: (PomodoroColorScheme) -> Unit,
     navigateToSettingScreen: () -> Unit,
 ) {
@@ -86,11 +77,11 @@ fun PomodoroScreen(
     LaunchedEffect(uiState.timeState) {
         if (uiState.timeState == TimeState.FINISHED) {
             media.start()
-            onEvent(PomodoroContract.PomodoroEvent.PlayedRingtone)
+            onEvent(PomodoroEvent.PlayedRingtone)
         }
     }
 
-    LifecycleEventEffect(Lifecycle.Event.ON_START) {
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         stopPomodoroService(context)
     }
 
@@ -318,7 +309,7 @@ fun PodomoroScreen2Preview() {
     ) {
         PomodoroScreen(
             updateColorScheme = {},
-            uiState = PomodoroContract.PomodoroUiState(
+            uiState = PomodoroUiState(
                 displayTime = "25\n" +
                         "00",
                 timeState = TimeState.INIT,
@@ -338,7 +329,7 @@ fun PodomoroScreen2Preview2() {
     ) {
         PomodoroScreen(
             updateColorScheme = {},
-            uiState = PomodoroContract.PomodoroUiState(
+            uiState = PomodoroUiState(
                 displayTime = "25\n00",
                 timeState = TimeState.INIT,
             ),
