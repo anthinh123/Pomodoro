@@ -152,7 +152,7 @@ fun AutoSizePreview1() {
 @Composable
 fun AutoSizePreview2() {
     Box(Modifier.size(200.dp, 300.dp)) {
-        AutoSizeText(text = "This is a bunch of text that will fill the box", maxFontSize = 25.sp)
+        AutoSizeText(text = "25\n00")
     }
 }
 

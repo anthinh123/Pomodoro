@@ -6,11 +6,13 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Build
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,13 +20,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -38,6 +45,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,17 +63,20 @@ import com.thinh.pomodoro.ui.theme.PomodoroColorScheme
 import com.thinh.pomodoro.ui.theme.PomodoroTheme
 import com.thinh.pomodoro.utils.AutoSizeText
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PomodoroScreen(
     uiState: PomodoroUiState,
     onEvent: (PomodoroEvent) -> Unit,
     updateColorScheme: (PomodoroColorScheme) -> Unit,
     navigateToSettingScreen: () -> Unit,
+    navigateToAnalyticsScreen: () -> Unit,
 ) {
     val context = LocalContext.current
     val media: MediaPlayer = remember {
         MediaPlayer.create(context, R.raw.school_bell)
     }
+    val textMeasurer = rememberTextMeasurer()
 
     DisposableEffect(Unit) {
         onDispose {
@@ -99,39 +110,52 @@ fun PomodoroScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
+    Scaffold(modifier = Modifier.fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background,
+        topBar = {
+            CenterAlignedTopAppBar(
+                windowInsets = WindowInsets(
+                    top = 0.dp,
+                ),
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                ),
+                title = {},
+                actions = {
+                    IconButton(onClick = { navigateToAnalyticsScreen() }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.round_bar_chart_24),
+                            tint = MaterialTheme.colorScheme.primary,
+                            contentDescription = null
+                        )
+                    }
 
+                    IconButton(onClick = { navigateToSettingScreen() }) {
+                        Icon(
+                            imageVector = Icons.Rounded.Settings,
+                            tint = MaterialTheme.colorScheme.primary,
+                            contentDescription = null
+                        )
+                    }
+                }
+            )
+        }) { paddingValues ->
         Column(
             modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.End
+                .padding(top = paddingValues.calculateTopPadding())
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            IconButton(
-                modifier = Modifier.padding(end = 16.dp),
-                onClick = { navigateToSettingScreen() }
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Settings,
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
-                )
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
 
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Bottom
             ) {
-
                 Header(
                     icon = getHeaderIcon(uiState.pomodoroStage),
                     title = getHeaderText(uiState.pomodoroStage),
@@ -145,83 +169,83 @@ fun PomodoroScreen(
                     maxFontSize = 20.sp
                 )
             }
-        }
 
-        AutoSizeText(
-            modifier = Modifier
-                .fillMaxSize()
-                .weight(4f),
-            text = uiState.displayTime,
-            fontWeight = Bold,
-            textAlign = Center,
-            color = MaterialTheme.colorScheme.primary,
-            style = TextStyle(
-                platformStyle = PlatformTextStyle(
-                    includeFontPadding = true
-                ),
-            )
-        )
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 32.dp)
-                .weight(1f),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(
-                onClick = { onEvent(ResetTime) },
+            AutoSizeText(
                 modifier = Modifier
-                    .weight(1f)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.secondary)
-                    .padding(8.dp)
-            ) {
-                Icon(
-                    modifier = Modifier.size(36.dp),
-                    painter = painterResource(id = R.drawable.round_replay_24),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
-                )
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            IconButton(
-                onClick = { onEvent(PlayPauseEvent) },
-                modifier = Modifier
-                    .weight(1.5f)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.tertiary)
-                    .padding(16.dp)
-            ) {
-                Icon(
-                    modifier = Modifier.size(36.dp),
-                    painter = painterResource(
-                        id = if (uiState.timeState == TimeState.PLAYING) R.drawable.round_pause_24 else R.drawable.round_play_arrow_24
+                    .fillMaxSize()
+                    .weight(4f),
+                text = uiState.displayTime,
+                fontWeight = Bold,
+                textAlign = Center,
+                color = MaterialTheme.colorScheme.primary,
+                style = TextStyle(
+                    platformStyle = PlatformTextStyle(
+                        includeFontPadding = true
                     ),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
                 )
-            }
+            )
 
-            Spacer(modifier = Modifier.width(16.dp))
-
-            IconButton(
-                onClick = { onEvent(SkipStage) },
+            Row(
                 modifier = Modifier
-                    .weight(1f)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.secondary)
-                    .padding(8.dp)
+                    .fillMaxSize()
+                    .padding(horizontal = 32.dp)
+                    .weight(1f),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    modifier = Modifier.size(36.dp),
-                    painter = painterResource(id = R.drawable.round_skip_next_24),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
-                )
+                IconButton(
+                    onClick = { onEvent(ResetTime) },
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(MaterialTheme.colorScheme.secondary)
+                        .padding(8.dp)
+                ) {
+                    Icon(
+                        modifier = Modifier.size(36.dp),
+                        painter = painterResource(id = R.drawable.round_replay_24),
+                        tint = MaterialTheme.colorScheme.primary,
+                        contentDescription = null
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                IconButton(
+                    onClick = { onEvent(PlayPauseEvent) },
+                    modifier = Modifier
+                        .weight(1.5f)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(MaterialTheme.colorScheme.tertiary)
+                        .padding(16.dp)
+                ) {
+                    Icon(
+                        modifier = Modifier.size(36.dp),
+                        painter = painterResource(
+                            id = if (uiState.timeState == TimeState.PLAYING) R.drawable.round_pause_24 else R.drawable.round_play_arrow_24
+                        ),
+                        tint = MaterialTheme.colorScheme.primary,
+                        contentDescription = null
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                IconButton(
+                    onClick = { onEvent(SkipStage) },
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(MaterialTheme.colorScheme.secondary)
+                        .padding(8.dp)
+                ) {
+                    Icon(
+                        modifier = Modifier.size(36.dp),
+                        painter = painterResource(id = R.drawable.round_skip_next_24),
+                        tint = MaterialTheme.colorScheme.primary,
+                        contentDescription = null
+                    )
+                }
             }
         }
     }
@@ -315,7 +339,8 @@ fun PodomoroScreen2Preview() {
                 timeState = TimeState.INIT,
             ),
             onEvent = {},
-            navigateToSettingScreen = {}
+            navigateToSettingScreen = {},
+            navigateToAnalyticsScreen = {}
         )
     }
 }
@@ -334,7 +359,8 @@ fun PodomoroScreen2Preview2() {
                 timeState = TimeState.INIT,
             ),
             onEvent = {},
-            navigateToSettingScreen = {}
+            navigateToSettingScreen = {},
+            navigateToAnalyticsScreen = {}
         )
     }
 }

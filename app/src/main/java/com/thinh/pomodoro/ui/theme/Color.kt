@@ -1,4 +1,5 @@
 package com.thinh.pomodoro.ui.theme
+
 import androidx.compose.ui.graphics.Color
 
 val md_theme_light_primary = Color(0xFF006B5D)
@@ -68,35 +69,47 @@ val working_light_primary = Color(0xFF471515)
 val working_light_background = Color(0xFFFFF2F2)
 val working_light_secondary = Color(0x26FF4C4C)
 val working_light_tertiary = Color(0xB3FF4C4C)
+val working_chart_light = Color(0xFFFF4C4C)
+
 
 // working_dark_theme
 val working_dark_primary = Color(0xFFFFF2F2)
 val working_dark_background = Color(0xFF0D0404)
 val working_dark_secondary = Color(0x26FF4C4C)
 val working_dark_tertiary = Color(0xB3FF4C4C)
+val working_chart_dark = Color(0xFFFF4C4C)
+
 
 // short_break_light_theme
 val short_break_light_primary = Color(0xFF14401D)
 val short_break_light_background = Color(0xFFF2FFF5)
 val short_break_light_secondary = Color(0x264DDA6E)
 val short_break_light_tertiary = Color(0x9E4DDA6E)
+val short_break_chart_light = Color(0xFF4DDA6E)
+
 
 // short_break_dark_theme
 val short_break_dark_primary = Color(0xFFF2FFF5)
 val short_break_dark_background = Color(0xFF0D0404)
 val short_break_dark_secondary = Color(0x264DDA6E)
 val short_break_dark_tertiary = Color(0x9E4DDA6E)
+val short_break_chart_dark = Color(0xFF4DDA6E)
+
 
 // long_break_light_theme
 val long_break_light_primary = Color(0xFF153047)
 val long_break_light_background = Color(0xFFF2F9FF)
 val long_break_light_secondary = Color(0x264CACFF)
 val long_break_light_tertiary = Color(0x9E4CACFF)
+val long_break_chart_light = Color(0xFF4CACFF)
+
 
 // long_break_dark_theme
 val long_break_dark_primary = Color(0xFFF5F2FF)
 val long_break_dark_background = Color(0xFF0D0404)
 val long_break_dark_secondary = Color(0x264CACFF)
 val long_break_dark_tertiary = Color(0x9E4CACFF)
+val long_break_chart_dark = Color(0xFF4CACFF)
+
 
 

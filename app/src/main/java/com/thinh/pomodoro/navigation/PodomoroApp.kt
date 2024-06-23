@@ -15,10 +15,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.thinh.pomodoro.features.analytics.ui.PomodoroAnalyticsScreen
+import com.thinh.pomodoro.features.analytics.ui.PomodoroAnalyticsViewModel
 import com.thinh.pomodoro.features.pomodoro.ui.PomodoroViewModel
 import com.thinh.pomodoro.features.pomodoro.ui.PomodoroScreen
 import com.thinh.pomodoro.features.settings.ui.SettingScreen
 import com.thinh.pomodoro.features.settings.ui.SettingViewModel
+import com.thinh.pomodoro.navigation.AppScreen.POMODORO_ANALYTICS_SCREEN
+import com.thinh.pomodoro.navigation.AppScreen.SETTING_SCREEN
 import com.thinh.pomodoro.ui.theme.PomodoroColorScheme
 import com.thinh.pomodoro.ui.theme.PomodoroTheme
 import org.koin.androidx.compose.koinViewModel
@@ -30,9 +34,6 @@ fun PodomoroApp() {
     var darkMode by remember { mutableStateOf(isSystemDarkMode) }
 
     val navController = rememberNavController()
-    val navActions: AppActions = remember(navController) {
-        AppActions(navController)
-    }
 
     PomodoroTheme(
         pomodoroColorScheme = colorScheme,
@@ -43,7 +44,6 @@ fun PodomoroApp() {
                 updateColorScheme = { color -> colorScheme = color },
                 updateDarkMode = { isDarkMode -> darkMode = isDarkMode },
                 navController = navController,
-                navActions = navActions,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(it),
@@ -57,7 +57,6 @@ fun PodomoroNavGraph(
     updateColorScheme: (PomodoroColorScheme) -> Unit,
     updateDarkMode: (Boolean) -> Unit,
     navController: NavHostController,
-    navActions: AppActions,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -71,11 +70,12 @@ fun PodomoroNavGraph(
                 updateColorScheme = { updateColorScheme(it) },
                 uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
                 onEvent = { viewModel.handleEvent(it) },
-                navigateToSettingScreen = { navController.navigate(AppScreen.SETTING_SCREEN.route) },
+                navigateToSettingScreen = { navController.navigate(SETTING_SCREEN.route) },
+                navigateToAnalyticsScreen = { navController.navigate(POMODORO_ANALYTICS_SCREEN.route) }
             )
         }
 
-        composable(AppScreen.SETTING_SCREEN.route) {
+        composable(SETTING_SCREEN.route) {
             val viewModel: SettingViewModel = koinViewModel()
             SettingScreen(
                 updateDarkMode = { updateDarkMode(it) },
@@ -83,6 +83,17 @@ fun PodomoroNavGraph(
                 onEvent = { viewModel.handleEvent(it) },
                 onBack = { navController.popBackStack() },
             )
+        }
+
+        composable(POMODORO_ANALYTICS_SCREEN.route) {
+            val viewModel: PomodoroAnalyticsViewModel = koinViewModel()
+            PomodoroAnalyticsScreen(
+                uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
+                onEvent = { viewModel.handleEvent(it) },
+                isDarkMode = isSystemInDarkTheme(),
+                onBack = { navController.popBackStack() }
+            )
+
         }
     }
 }

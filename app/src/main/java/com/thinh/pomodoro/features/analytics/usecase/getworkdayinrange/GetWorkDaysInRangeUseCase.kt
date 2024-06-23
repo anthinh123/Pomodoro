@@ -1,4 +1,4 @@
-package com.thinh.pomodoro.features.pomodoro.usecase.getworkdayinrange
+package com.thinh.pomodoro.features.analytics.usecase.getworkdayinrange
 
 import com.thinh.pomodoro.features.pomodoro.data.WorkDay
 import kotlinx.coroutines.flow.Flow

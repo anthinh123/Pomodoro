@@ -171,7 +171,7 @@ private fun PomodoroSettingItem(
                 thumbColor = MaterialTheme.colorScheme.primary,
                 activeTrackColor = MaterialTheme.colorScheme.primary,
             ),
-            valueRange = 0f..60f,
+            valueRange = 1f..60f,
         )
     }
 }

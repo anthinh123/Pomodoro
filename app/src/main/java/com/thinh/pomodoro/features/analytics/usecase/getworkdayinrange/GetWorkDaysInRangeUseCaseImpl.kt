@@ -1,4 +1,4 @@
-package com.thinh.pomodoro.features.pomodoro.usecase.getworkdayinrange
+package com.thinh.pomodoro.features.analytics.usecase.getworkdayinrange
 
 import com.thinh.pomodoro.database.WorkDayDao
 import com.thinh.pomodoro.features.pomodoro.data.WorkDay
@@ -12,7 +12,7 @@ class GetWorkDaysInRangeUseCaseImpl(
 ) : GetWorkDaysInRangeUseCase {
     override suspend fun execute(startDate: Long, endDate: Long): Flow<List<WorkDay>> {
         return workDayDao.getWorkDaysInRange(startDate, endDate).map { entities ->
-            entities.map { workDayMapper.mapFromEntity(it) } ?: emptyList()
+            entities.map { workDayMapper.mapFromEntity(it) }
         }
     }
 }

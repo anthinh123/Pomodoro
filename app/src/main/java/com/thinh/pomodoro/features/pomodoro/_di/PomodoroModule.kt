@@ -11,8 +11,8 @@ import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroManagerImpl
 import com.thinh.pomodoro.features.pomodoro.ui.PomodoroViewModel
 import com.thinh.pomodoro.features.pomodoro.usecase.getnumberofworks.GetCountOfWorksInRangeUseCase
 import com.thinh.pomodoro.features.pomodoro.usecase.getnumberofworks.GetCountOfWorksInRangeUseCaseImpl
-import com.thinh.pomodoro.features.pomodoro.usecase.getworkdayinrange.GetWorkDaysInRangeUseCaseImpl
-import com.thinh.pomodoro.features.pomodoro.usecase.getworkdayinrange.GetWorkDaysInRangeUseCase
+import com.thinh.pomodoro.features.analytics.usecase.getworkdayinrange.GetWorkDaysInRangeUseCaseImpl
+import com.thinh.pomodoro.features.analytics.usecase.getworkdayinrange.GetWorkDaysInRangeUseCase
 import com.thinh.pomodoro.features.pomodoro.usecase.insert.InsertWorkDayUseCase
 import com.thinh.pomodoro.features.pomodoro.usecase.insert.InsertWorkDayUseCaseImpl
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +25,6 @@ val pomodoroModule = module {
     single<Timer> { TimerImpl() }
     single<WorkDayMapper> { WorkDayMapper() }
     single<InsertWorkDayUseCase> { InsertWorkDayUseCaseImpl(get(), get()) }
-    single<GetWorkDaysInRangeUseCase> { GetWorkDaysInRangeUseCaseImpl(get(), get()) }
     single<GetCountOfWorksInRangeUseCase> { GetCountOfWorksInRangeUseCaseImpl(get()) }
     single<PomodoroManager> {
         PomodoroManagerImpl(
