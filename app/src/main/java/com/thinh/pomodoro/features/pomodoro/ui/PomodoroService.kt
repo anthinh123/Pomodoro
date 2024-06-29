@@ -23,10 +23,10 @@ import com.thinh.pomodoro.utils.TimeUtil.convertMillisToTime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+
 
 enum class PomodoroAction {
     START,
