@@ -19,7 +19,6 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
 
-@RequiresApi(Build.VERSION_CODES.O)
 class CalendarViewModel : ViewModel() {
 
     private val _visibleDates =

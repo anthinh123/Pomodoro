@@ -27,7 +27,6 @@ import java.time.format.TextStyle
  * @param weekDayLabel flag that indicates if name of week day should be visible above day value
  * @param modifier view modifier
  */
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DayView(
     date: LocalDate,
@@ -39,7 +38,7 @@ fun DayView(
 ) {
     val isCurrentDay = date == LocalDate.now()
     val dayValueModifier =
-//        if (isCurrentDay) modifier.background(
+//        if (isCurrentDay) { modifier.background(
 //            theme.selectedDayBackgroundColor.copy(alpha = 0.5f),
 //            shape = theme.dayShape
 //        )

@@ -15,7 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.mabn.calendarlibrary.component.InlineCalendar
+import com.thinh.pomodoro.ui.calendarlibrary.component.InlineCalendar
 import com.thinh.pomodoro.ui.calendarlibrary.component.MonthText
 import com.thinh.pomodoro.ui.calendarlibrary.component.MonthViewCalendar
 import com.thinh.pomodoro.ui.calendarlibrary.component.ToggleExpandCalendarButton
@@ -27,7 +27,6 @@ import com.thinh.pomodoro.ui.calendarlibrary.utils.getWeekStartDate
 import java.time.LocalDate
 import java.time.YearMonth
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ExpandableCalendar(
     onDayClick: (LocalDate) -> Unit,

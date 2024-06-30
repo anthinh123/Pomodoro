@@ -3,6 +3,7 @@ package com.thinh.pomodoro.features.analytics.ui
 import com.thinh.podomoro.mvi.BaseMviContract
 import com.thinh.pomodoro.features.analytics.ui.PomodoroAnalyticsContract.PomodoroAnalyticsEvent
 import com.thinh.pomodoro.features.analytics.ui.PomodoroAnalyticsContract.PomodoroAnalyticsUiState
+import java.time.LocalDate
 
 interface PomodoroAnalyticsContract :
     BaseMviContract<PomodoroAnalyticsUiState, PomodoroAnalyticsEvent> {
@@ -14,5 +15,6 @@ interface PomodoroAnalyticsContract :
     )
 
     sealed class PomodoroAnalyticsEvent {
+        class SelectDate(val selectedDate: LocalDate) : PomodoroAnalyticsEvent()
     }
 }

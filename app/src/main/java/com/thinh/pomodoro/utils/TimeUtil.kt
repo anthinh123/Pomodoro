@@ -1,6 +1,10 @@
 package com.thinh.pomodoro.utils
 
 import android.icu.util.Calendar
+import android.os.Build
+import androidx.annotation.RequiresApi
+import java.time.LocalDate
+import java.time.ZoneOffset
 import java.util.Date
 
 object TimeUtil {
@@ -46,5 +50,9 @@ object TimeUtil {
         calendar.set(Calendar.SECOND, 59)
         calendar.set(Calendar.MILLISECOND, 999)
         return calendar.timeInMillis
+    }
+
+    fun convertLocalDateToDate(localDate: LocalDate): Date {
+        return Date.from(localDate.atStartOfDay().toInstant(ZoneOffset.UTC))
     }
 }

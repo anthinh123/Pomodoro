@@ -1,10 +1,8 @@
 package com.thinh.pomodoro.features.analytics.ui
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.thinh.pomodoro.features.analytics.ui.PomodoroAnalyticsContract.PomodoroAnalyticsEvent
 import com.thinh.pomodoro.features.analytics.ui.PomodoroAnalyticsContract.PomodoroAnalyticsUiState
-import com.thinh.pomodoro.features.analytics.ui.chart.ChartModel
 import com.thinh.pomodoro.features.analytics.usecase.getworkdayinrange.GetWorkDaysInRangeUseCase
 import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroStage
 import com.thinh.pomodoro.mvi.BaseViewModel
@@ -28,7 +26,11 @@ class PomodoroAnalyticsViewModel(
     }
 
     override fun handleEvent(event: PomodoroAnalyticsEvent) {
-
+        when (event) {
+            is PomodoroAnalyticsEvent.SelectDate -> {
+                loadWorkDays(TimeUtil.convertLocalDateToDate(event.selectedDate))
+            }
+        }
     }
 
     private fun loadWorkDays(date: Date) {
@@ -58,7 +60,6 @@ class PomodoroAnalyticsViewModel(
                 }
             }
         }
-
     }
 
     private fun convertToMinute(time: Long): Int {

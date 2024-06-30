@@ -1,4 +1,4 @@
-package com.mabn.calendarlibrary.component
+package com.thinh.pomodoro.ui.calendarlibrary.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -12,8 +12,6 @@ import androidx.compose.ui.unit.dp
 import com.thinh.pomodoro.ui.calendarlibrary.core.CalendarTheme
 import com.thinh.pomodoro.ui.calendarlibrary.core.DateTimeConstants
 import com.thinh.pomodoro.ui.calendarlibrary.utils.dayViewModifier
-import com.thinh.pomodoro.ui.calendarlibrary.component.CalendarPager
-import com.thinh.pomodoro.ui.calendarlibrary.component.DayView
 import java.time.LocalDate
 
 @Composable

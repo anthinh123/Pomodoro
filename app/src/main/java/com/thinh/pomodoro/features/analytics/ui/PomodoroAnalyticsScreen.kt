@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.thinh.pomodoro.common.AppScaffold
 import com.thinh.pomodoro.features.analytics.ui.PomodoroAnalyticsContract.PomodoroAnalyticsEvent
+import com.thinh.pomodoro.features.analytics.ui.PomodoroAnalyticsContract.PomodoroAnalyticsEvent.SelectDate
 import com.thinh.pomodoro.features.analytics.ui.PomodoroAnalyticsContract.PomodoroAnalyticsUiState
 import com.thinh.pomodoro.features.analytics.ui.chart.ChartCirclePie
 import com.thinh.pomodoro.features.analytics.ui.chart.ChartModel
@@ -49,7 +50,6 @@ import com.thinh.pomodoro.ui.theme.working_chart_dark
 import com.thinh.pomodoro.ui.theme.working_chart_light
 import java.time.LocalDate
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PomodoroAnalyticsScreen(
     uiState: PomodoroAnalyticsUiState,
@@ -96,7 +96,7 @@ fun PomodoroAnalyticsScreen(
             selectedDayValueTextColor = MaterialTheme.colorScheme.primary,
             dayShape = CircleShape,
         ), onDayClick = {
-            Log.d("PomodoroAnalyticsScreen", "onDayClick: $it")
+            onEvent(SelectDate(it))
         })
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -173,7 +173,6 @@ private fun getChartColor(isDarkMode: Boolean, type: PomodoroStage): Color {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun PomodoroAnalyticsScreenPreview() {
@@ -190,7 +189,6 @@ fun PomodoroAnalyticsScreenPreview() {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun PomodoroAnalyticsScreenPreview2() {
