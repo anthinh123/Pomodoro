@@ -1,5 +1,7 @@
 package com.thinh.pomodoro.ui.calendarlibrary
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -25,6 +27,7 @@ import com.thinh.pomodoro.ui.calendarlibrary.utils.getWeekStartDate
 import java.time.LocalDate
 import java.time.YearMonth
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ExpandableCalendar(
     onDayClick: (LocalDate) -> Unit,

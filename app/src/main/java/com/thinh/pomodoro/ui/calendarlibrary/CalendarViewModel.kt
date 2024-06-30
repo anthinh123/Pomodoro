@@ -1,5 +1,7 @@
 package com.thinh.pomodoro.ui.calendarlibrary
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thinh.pomodoro.ui.calendarlibrary.core.CalendarIntent
@@ -17,6 +19,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
 
+@RequiresApi(Build.VERSION_CODES.O)
 class CalendarViewModel : ViewModel() {
 
     private val _visibleDates =
@@ -87,7 +90,7 @@ class CalendarViewModel : ViewModel() {
 
     private fun calculateCalendarDates(
         startDate: LocalDate,
-        period: Period = Period.WEEK
+        period: Period = Period.WEEK,
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             _visibleDates.emit(
@@ -109,7 +112,8 @@ class CalendarViewModel : ViewModel() {
     }
 
     private fun calculateCollapsedCalendarDays(startDate: LocalDate): Array<List<LocalDate>> {
-        val dates = startDate.getNextDates(RelativePosition.values().size * DateTimeConstants.DAYS_IN_WEEK)
+        val dates =
+            startDate.getNextDates(RelativePosition.values().size * DateTimeConstants.DAYS_IN_WEEK)
         return Array(RelativePosition.values().size) {
             dates.slice(it * DateTimeConstants.DAYS_IN_WEEK until (it + 1) * DateTimeConstants.DAYS_IN_WEEK)
         }

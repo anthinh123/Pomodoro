@@ -1,5 +1,7 @@
 package com.thinh.pomodoro.ui.calendarlibrary.component
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -7,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -24,6 +27,7 @@ import java.time.format.TextStyle
  * @param weekDayLabel flag that indicates if name of week day should be visible above day value
  * @param modifier view modifier
  */
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DayView(
     date: LocalDate,
@@ -31,19 +35,26 @@ fun DayView(
     theme: CalendarTheme,
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
-    weekDayLabel: Boolean = true
+    weekDayLabel: Boolean = true,
 ) {
     val isCurrentDay = date == LocalDate.now()
     val dayValueModifier =
-        if (isCurrentDay) modifier.background(
-            theme.selectedDayBackgroundColor.copy(alpha = 0.5f),
-            shape = theme.dayShape
-        )
-        else if (isSelected) modifier.background(
-            theme.selectedDayBackgroundColor,
-            shape = theme.dayShape
-        )
-        else modifier.background(theme.dayBackgroundColor, shape = theme.dayShape)
+//        if (isCurrentDay) modifier.background(
+//            theme.selectedDayBackgroundColor.copy(alpha = 0.5f),
+//            shape = theme.dayShape
+//        )
+        if (isSelected) {
+            modifier
+                .background(
+                    theme.selectedDayBackgroundColor,
+                    shape = theme.dayShape,
+                )
+                .alpha(1f)
+        } else {
+            modifier
+                .background(theme.dayBackgroundColor, shape = theme.dayShape)
+                .alpha(0.5f)
+        }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,

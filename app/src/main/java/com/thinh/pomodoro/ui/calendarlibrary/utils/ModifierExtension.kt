@@ -14,6 +14,6 @@ internal fun Modifier.dayViewModifier(
         if ((!monthView && date.isBefore(LocalDate.now())) ||
             (currentMonth != null && date.isAfter(currentMonth.atEndOfMonth())) ||
             (monthView && currentMonth != null && date.isBefore(currentMonth.atDay(1))))
-            0.5f else 1f
+            1f else 1f
     )
 )

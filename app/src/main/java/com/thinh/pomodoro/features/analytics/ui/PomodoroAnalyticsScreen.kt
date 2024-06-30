@@ -1,6 +1,8 @@
 package com.thinh.pomodoro.features.analytics.ui
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,9 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,13 +37,19 @@ import com.thinh.pomodoro.features.analytics.ui.PomodoroAnalyticsContract.Pomodo
 import com.thinh.pomodoro.features.analytics.ui.chart.ChartCirclePie
 import com.thinh.pomodoro.features.analytics.ui.chart.ChartModel
 import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroStage
+import com.thinh.pomodoro.ui.calendarlibrary.ExpandableCalendar
+import com.thinh.pomodoro.ui.calendarlibrary.core.calendarDefaultTheme
+import com.thinh.pomodoro.ui.theme.PomodoroColorScheme
+import com.thinh.pomodoro.ui.theme.PomodoroTheme
 import com.thinh.pomodoro.ui.theme.long_break_chart_dark
 import com.thinh.pomodoro.ui.theme.long_break_chart_light
 import com.thinh.pomodoro.ui.theme.short_break_chart_dark
 import com.thinh.pomodoro.ui.theme.short_break_chart_light
 import com.thinh.pomodoro.ui.theme.working_chart_dark
 import com.thinh.pomodoro.ui.theme.working_chart_light
+import java.time.LocalDate
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PomodoroAnalyticsScreen(
     uiState: PomodoroAnalyticsUiState,
@@ -80,6 +87,19 @@ fun PomodoroAnalyticsScreen(
         isCanBack = true,
         onBackClicked = { onBack.invoke() }
     ) {
+
+        ExpandableCalendar(theme = calendarDefaultTheme.copy(
+            headerTextColor = MaterialTheme.colorScheme.onBackground,
+            dayValueTextColor = MaterialTheme.colorScheme.onBackground,
+            weekDaysTextColor = MaterialTheme.colorScheme.onBackground,
+            selectedDayBackgroundColor = MaterialTheme.colorScheme.tertiary,
+            selectedDayValueTextColor = MaterialTheme.colorScheme.primary,
+            dayShape = CircleShape,
+        ), onDayClick = {
+            Log.d("PomodoroAnalyticsScreen", "onDayClick: $it")
+        })
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Column(
             modifier = Modifier
@@ -153,13 +173,36 @@ private fun getChartColor(isDarkMode: Boolean, type: PomodoroStage): Color {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun PomodoroAnalyticsScreenPreview() {
-    PomodoroAnalyticsScreen(
-        uiState = PomodoroAnalyticsUiState(),
-        onEvent = {},
-        isDarkMode = false,
-        onBack = {}
-    )
+    PomodoroTheme(
+        pomodoroColorScheme = PomodoroColorScheme.SHORT_BREAK_COLOR,
+        darkMode = false
+    ) {
+        PomodoroAnalyticsScreen(
+            uiState = PomodoroAnalyticsUiState(),
+            onEvent = {},
+            isDarkMode = false,
+            onBack = {}
+        )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview
+@Composable
+fun PomodoroAnalyticsScreenPreview2() {
+    PomodoroTheme(
+        pomodoroColorScheme = PomodoroColorScheme.WORKING_COLOR,
+        darkMode = false
+    ) {
+        PomodoroAnalyticsScreen(
+            uiState = PomodoroAnalyticsUiState(),
+            onEvent = {},
+            isDarkMode = false,
+            onBack = {}
+        )
+    }
 }

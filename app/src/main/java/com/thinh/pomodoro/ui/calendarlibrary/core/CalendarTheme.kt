@@ -32,5 +32,4 @@ val calendarDefaultTheme: CalendarTheme
         headerTextColor = MaterialTheme.colorScheme.onBackground,
         weekDaysTextColor = MaterialTheme.colorScheme.onBackground,
         dayShape = RectangleShape
-
     )
