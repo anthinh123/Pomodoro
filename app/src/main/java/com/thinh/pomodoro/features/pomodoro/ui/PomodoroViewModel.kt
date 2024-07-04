@@ -12,6 +12,7 @@ import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroManager
 import com.thinh.pomodoro.features.pomodoro.usecase.getnumberofworks.GetCountOfWorksInRangeUseCase
 import com.thinh.pomodoro.mvi.BaseViewModel
 import com.thinh.pomodoro.utils.TimeUtil
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class PomodoroViewModel(
@@ -32,7 +33,7 @@ class PomodoroViewModel(
             }
         }
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             getCountOfWorksInRangeUseCase.execute(
                 pomodoroType = 0,
                 startDate = TimeUtil.getStartTimeOfCurrentDay(),

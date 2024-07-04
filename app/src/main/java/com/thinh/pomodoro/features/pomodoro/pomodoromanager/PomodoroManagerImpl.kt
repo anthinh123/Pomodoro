@@ -35,9 +35,8 @@ class PomodoroManagerImpl(
     override val podomoroUiState: StateFlow<PodomoroUiState> = _podomoroUiState
 
     init {
-        loadSettings()
-        timer.initTime(getPlayTime(pomodoroStage))
         startObserverTimer()
+        loadSettings()
     }
 
     override fun takeActionToTimer() {
@@ -89,6 +88,10 @@ class PomodoroManagerImpl(
                 workTime = settings.workTime * 60L
                 breakTime = settings.shortBreakTime * 60L
                 longBreakTime = settings.longBreakTime * 60L
+
+                if (_podomoroUiState.value.timeState == TimeState.INIT) {
+                    timer.initTime(getPlayTime(pomodoroStage))
+                }
             }
         }
     }

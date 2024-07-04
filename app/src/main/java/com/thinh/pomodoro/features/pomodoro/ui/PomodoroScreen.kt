@@ -4,9 +4,7 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
-import android.os.Build
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -45,7 +42,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,10 +51,11 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import com.thinh.pomodoro.R
 import com.thinh.pomodoro.features.pomodoro.pomodoromanager.PomodoroStage
 import com.thinh.pomodoro.features.pomodoro.timer.TimeState
-import com.thinh.pomodoro.features.pomodoro.ui.PomodoroContract.*
+import com.thinh.pomodoro.features.pomodoro.ui.PomodoroContract.PomodoroEvent
 import com.thinh.pomodoro.features.pomodoro.ui.PomodoroContract.PomodoroEvent.PlayPauseEvent
 import com.thinh.pomodoro.features.pomodoro.ui.PomodoroContract.PomodoroEvent.ResetTime
 import com.thinh.pomodoro.features.pomodoro.ui.PomodoroContract.PomodoroEvent.SkipStage
+import com.thinh.pomodoro.features.pomodoro.ui.PomodoroContract.PomodoroUiState
 import com.thinh.pomodoro.ui.theme.PomodoroColorScheme
 import com.thinh.pomodoro.ui.theme.PomodoroTheme
 import com.thinh.pomodoro.utils.AutoSizeText
@@ -76,7 +73,6 @@ fun PomodoroScreen(
     val media: MediaPlayer = remember {
         MediaPlayer.create(context, R.raw.school_bell)
     }
-    val textMeasurer = rememberTextMeasurer()
 
     DisposableEffect(Unit) {
         onDispose {
@@ -254,11 +250,7 @@ fun PomodoroScreen(
 fun startPomodoroService(context: Context) {
     val intent = Intent(context, PomodoroService::class.java)
     intent.action = PomodoroAction.START.name
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        context.startForegroundService(intent)
-    } else {
-        context.startService(intent)
-    }
+    context.startForegroundService(intent)
 }
 
 fun stopPomodoroService(context: Context) {
