@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.thinh.pomodoro.common.AppScaffold
@@ -108,20 +109,31 @@ fun PomodoroAnalyticsScreen(
                 .verticalScroll(rememberScrollState())
         ) {
 
-            ChartCirclePie(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentSize(),
-                charts = chartModels,
-                text = text,
-                totalTime = totalTime
-            )
+            if (totalTime == 0) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = "No data",
+                    textAlign = TextAlign.Center,
+                )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            } else {
+                ChartCirclePie(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentSize(),
+                    charts = chartModels,
+                    text = text,
+                    totalTime = totalTime
+                )
 
-            ChartLine(isDarkMode, PomodoroStage.WORK, "Work", uiState.workTime)
-            ChartLine(isDarkMode, PomodoroStage.BREAK, "Break", uiState.breakTime)
-            ChartLine(isDarkMode, PomodoroStage.LONG_BREAK, "Long break", uiState.longBreakTime)
+                Spacer(modifier = Modifier.height(16.dp))
+
+                ChartLine(isDarkMode, PomodoroStage.WORK, "Work", uiState.workTime)
+                ChartLine(isDarkMode, PomodoroStage.BREAK, "Break", uiState.breakTime)
+                ChartLine(isDarkMode, PomodoroStage.LONG_BREAK, "Long break", uiState.longBreakTime)
+            }
         }
     }
 
