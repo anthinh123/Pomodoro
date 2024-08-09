@@ -1,8 +1,6 @@
 package com.thinh.pomodoro.features.analytics.ui
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,7 +47,6 @@ import com.thinh.pomodoro.ui.theme.short_break_chart_dark
 import com.thinh.pomodoro.ui.theme.short_break_chart_light
 import com.thinh.pomodoro.ui.theme.working_chart_dark
 import com.thinh.pomodoro.ui.theme.working_chart_light
-import java.time.LocalDate
 
 @Composable
 fun PomodoroAnalyticsScreen(
