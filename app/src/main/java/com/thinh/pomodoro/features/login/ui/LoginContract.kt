@@ -9,6 +9,8 @@ interface LoginContract : BaseMviContract<LoginUiState, LoginEvent> {
     data class LoginUiState(
         val userName: String = "",
         val password: String = "",
+        val errorMessage: String? = null,
+        val isLoggedIn: Boolean = false,
         val isLoading: Boolean = false,
     )
 

@@ -70,6 +70,10 @@ dependencies {
     implementation("com.google.accompanist:accompanist-pager:0.23.1")
     implementation("com.google.accompanist:accompanist-flowlayout:0.26.4-beta")
     implementation("androidx.compose.material:material-icons-extended")
+    implementation(libs.retrofit2)
+    implementation(libs.gson)
+    implementation(libs.okhttp3.logging.interceptor)
+    implementation(libs.retrofit2.converter.gson)
     kapt("androidx.room:room-compiler:2.6.1")
 
     // optional - Kotlin Extensions and Coroutines support for Room
