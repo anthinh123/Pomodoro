@@ -8,6 +8,7 @@
 
 ** Architecture 
 - Use Compose + MVI
+- One Forground service to can run app in background
 - Timer: Handle time running, pause, play
 - PomodoroManager: Manage state of pomodoro (work, break, long break)
 - PomodoroViewModel: Consume state from PomodoroManager and convert to UI state
