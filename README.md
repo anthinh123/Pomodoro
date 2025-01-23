@@ -17,10 +17,9 @@
 
 
 ** Image
-![Screenshot_20250123_134310_Pomodoro](https://github.com/user-attachments/assets/1eab25f0-ee34-475b-9d7d-0718971bbe06)
 
-![Screenshot_20250123_134343_Pomodoro](https://github.com/user-attachments/assets/3dcd2bcd-7963-4171-9618-0c2b7960dfd9)
+<img src="https://github.com/user-attachments/assets/1eab25f0-ee34-475b-9d7d-0718971bbe06" width="256"/> | <img src="https://github.com/user-attachments/assets/3dcd2bcd-7963-4171-9618-0c2b7960dfd9" width="256"/> | 
+<img src="https://github.com/user-attachments/assets/7b99b8e2-e904-47cd-898b-b2f33de3ec91" width="256"/> 
 
-![Screenshot_20250123_134408_Pomodoro](https://github.com/user-attachments/assets/7b99b8e2-e904-47cd-898b-b2f33de3ec91)
+<img src="https://github.com/user-attachments/assets/4c61e6e5-38ab-4cff-aad5-ff42c2cf827f" width="256"/>
 
-![Screenshot_20250123_134321_Pomodoro](https://github.com/user-attachments/assets/4c61e6e5-38ab-4cff-aad5-ff42c2cf827f)
