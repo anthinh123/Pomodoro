@@ -17,6 +17,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.thinh.pomodoro.features.analytics.ui.PomodoroAnalyticsScreen
 import com.thinh.pomodoro.features.analytics.ui.PomodoroAnalyticsViewModel
+import com.thinh.pomodoro.features.login.ui.LoginScreen
+import com.thinh.pomodoro.features.login.ui.LoginViewModel
 import com.thinh.pomodoro.features.pomodoro.ui.PomodoroViewModel
 import com.thinh.pomodoro.features.pomodoro.ui.PomodoroScreen
 import com.thinh.pomodoro.features.settings.ui.SettingScreen
@@ -61,9 +63,19 @@ fun PodomoroNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = AppScreen.PODOMORO_SCREEN.route,
+//        startDestination = AppScreen.PODOMORO_SCREEN.route,
+        startDestination = AppScreen.LOGIN_SCREEN.route,
         modifier = modifier,
     ) {
+
+        composable(AppScreen.LOGIN_SCREEN.route) {
+            val viewModel: LoginViewModel = koinViewModel()
+            LoginScreen(
+                uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
+                onEvent = { viewModel.handleEvent(it) }
+            )
+        }
+
         composable(AppScreen.PODOMORO_SCREEN.route) {
             val viewModel: PomodoroViewModel = koinViewModel()
             PomodoroScreen(

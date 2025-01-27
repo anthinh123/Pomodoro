@@ -52,8 +52,7 @@ import com.thinh.pomodoro.features.login.ui.LoginContract.LoginUiState
 fun LoginScreen(
     uiState: LoginUiState,
     onEvent: (LoginEvent) -> Unit,
-
-    ) {
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
