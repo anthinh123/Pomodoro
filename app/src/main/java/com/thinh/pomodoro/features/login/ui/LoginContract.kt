@@ -17,9 +17,10 @@ interface LoginContract : BaseMviContract<LoginUiState, LoginEvent> {
     sealed class LoginEvent {
         class OnUserNameChanged(val userName: String) : LoginEvent()
         class OnPasswordChanged(val password: String) : LoginEvent()
-        object Login : LoginEvent()
-        object OnForgotPassword : LoginEvent()
-        object Register : LoginEvent()
+        data object Login : LoginEvent()
+        data object OnForgotPassword : LoginEvent()
+        data object Register : LoginEvent()
+        data object ShowedErrorMessage : LoginEvent()
     }
 
 }

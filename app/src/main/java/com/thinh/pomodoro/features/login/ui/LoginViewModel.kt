@@ -8,9 +8,11 @@ import com.thinh.pomodoro.features.login.ui.LoginContract.LoginEvent.OnForgotPas
 import com.thinh.pomodoro.features.login.ui.LoginContract.LoginEvent.OnPasswordChanged
 import com.thinh.pomodoro.features.login.ui.LoginContract.LoginEvent.OnUserNameChanged
 import com.thinh.pomodoro.features.login.ui.LoginContract.LoginEvent.Register
+import com.thinh.pomodoro.features.login.ui.LoginContract.LoginEvent.ShowedErrorMessage
 import com.thinh.pomodoro.features.login.ui.LoginContract.LoginUiState
 import com.thinh.pomodoro.features.login.usecase.LoginUseCase
 import com.thinh.pomodoro.mvi.BaseViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
@@ -28,13 +30,20 @@ class LoginViewModel(
             is OnUserNameChanged -> updateUserName(event.userName)
             OnForgotPassword -> forgotPassword()
             Register -> register()
+            ShowedErrorMessage -> resetErrorMessage()
+        }
+    }
+
+    private fun resetErrorMessage() {
+        updateState {
+            copy(errorMessage = null)
         }
     }
 
     private fun login() {
         if (!validateInput()) {
             updateState {
-                copy(errorMessage = "UserName or password is incorrect")
+                copy(errorMessage = "UserName or password is invalid")
             }
             return
         }
@@ -44,29 +53,36 @@ class LoginViewModel(
         }
 
         viewModelScope.launch {
-            val result = loginUseCase.execute(
-                username = uiState.value.userName,
-                password = uiState.value.password
-            )
-            when (result) {
-                is NetworkResult.Success -> {
-                    updateState {
-                        copy(isLoading = false, isLoggedIn = true)
-                    }
-                }
+//            val result = loginUseCase.execute(
+//                username = uiState.value.userName,
+//                password = uiState.value.password
+//            )
+//            when (result) {
+//                is NetworkResult.Success -> {
+//                    updateState {
+//                        copy(isLoading = false, isLoggedIn = true)
+//                    }
+//                }
+//
+//                is NetworkResult.Error -> {
+//                    updateState {
+//                        copy(isLoading = false, errorMessage = result.errorMsg)
+//                    }
+//                }
+//
+//                is NetworkResult.Exception -> {
+//                    updateState {
+//                        copy(isLoading = false, errorMessage = "Something went wrong")
+//                    }
+//                }
+//            }
 
-                is NetworkResult.Error -> {
-                    updateState {
-                        copy(isLoading = false, errorMessage = result.errorMsg)
-                    }
-                }
-
-                is NetworkResult.Exception -> {
-                    updateState {
-                        copy(isLoading = false, errorMessage = "Something went wrong")
-                    }
-                }
+            // TODO : Use api
+            delay(1000)
+            updateState {
+                copy(isLoading = false, isLoggedIn = true)
             }
+
         }
 
     }

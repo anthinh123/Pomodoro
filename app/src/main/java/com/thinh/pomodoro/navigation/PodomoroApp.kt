@@ -21,6 +21,8 @@ import com.thinh.pomodoro.features.login.ui.LoginScreen
 import com.thinh.pomodoro.features.login.ui.LoginViewModel
 import com.thinh.pomodoro.features.pomodoro.ui.PomodoroViewModel
 import com.thinh.pomodoro.features.pomodoro.ui.PomodoroScreen
+import com.thinh.pomodoro.features.registration.ui.RegistrationScreen
+import com.thinh.pomodoro.features.registration.ui.RegistrationViewModel
 import com.thinh.pomodoro.features.settings.ui.SettingScreen
 import com.thinh.pomodoro.features.settings.ui.SettingViewModel
 import com.thinh.pomodoro.navigation.AppScreen.POMODORO_ANALYTICS_SCREEN
@@ -72,7 +74,17 @@ fun PodomoroNavGraph(
             val viewModel: LoginViewModel = koinViewModel()
             LoginScreen(
                 uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
-                onEvent = { viewModel.handleEvent(it) }
+                onEvent = { viewModel.handleEvent(it) },
+                navigateToRegisterScreen = { navController.navigate(AppScreen.REGISTER_SCREEN.route) }
+            )
+        }
+
+        composable(AppScreen.REGISTER_SCREEN.route) {
+            val viewModel: RegistrationViewModel = koinViewModel()
+            RegistrationScreen(
+                uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
+                onEvent = { viewModel.handleEvent(it) },
+                onBack = { navController.popBackStack() },
             )
         }
 
