@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -13,6 +14,7 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,22 +25,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.thinh.pomodoro.common.AppScaffold
+import com.thinh.pomodoro.features.settings.ui.SettingContract.*
 import com.thinh.pomodoro.features.settings.ui.SettingContract.SettingEvent.IsDarkModeChanged
 import com.thinh.pomodoro.features.settings.ui.SettingContract.SettingEvent.LongBreakTimeChanged
 import com.thinh.pomodoro.features.settings.ui.SettingContract.SettingEvent.ShortBreakTimeChanged
+import com.thinh.pomodoro.features.settings.ui.SettingContract.SettingEvent.SignOut
 import com.thinh.pomodoro.features.settings.ui.SettingContract.SettingEvent.WorkTimeChanged
 import com.thinh.pomodoro.ui.theme.PomodoroColorScheme
 import com.thinh.pomodoro.ui.theme.PomodoroTheme
 
 @Composable
 fun SettingScreen(
-    uiState: SettingContract.SettingUiState,
-    onEvent: (SettingContract.SettingEvent) -> Unit,
+    uiState: SettingUiState,
+    onEvent: (SettingEvent) -> Unit,
     updateDarkMode: (Boolean) -> Unit,
     onBack: () -> Unit,
+    onSignOut: () -> Unit,
 ) {
 
     var workTime by remember { mutableIntStateOf(uiState.workTime) }
@@ -50,6 +57,12 @@ fun SettingScreen(
 //        darkMode = uiState.isDarkMode
 //        updateDarkMode.invoke(uiState.isDarkMode)
 //    }
+
+    LaunchedEffect(uiState.isSignOut) {
+        if (uiState.isSignOut) {
+            onSignOut()
+        }
+    }
 
     LaunchedEffect(uiState.workTime) {
         workTime = uiState.workTime
@@ -125,6 +138,12 @@ fun SettingScreen(
                     onEvent(LongBreakTimeChanged(it))
                 }
             )
+
+            TextButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { onEvent(SignOut) }) {
+                Text(text = "Sign out", color = Color.Red, fontSize = 20.sp)
+            }
         }
     }
 
@@ -184,15 +203,17 @@ fun SettingScreenPreview() {
         darkMode = false
     ) {
         SettingScreen(
-            uiState = SettingContract.SettingUiState(
+            uiState = SettingUiState(
                 workTime = 25,
                 shortBreakTime = 5,
                 longBreakTime = 15,
-                isDarkMode = false
+                isDarkMode = false,
+                isSignOut = false
             ),
             onEvent = {},
             updateDarkMode = {},
-            onBack = {}
+            onBack = {},
+            onSignOut = {}
         )
     }
 }

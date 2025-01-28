@@ -65,7 +65,6 @@ fun PodomoroNavGraph(
 ) {
     NavHost(
         navController = navController,
-//        startDestination = AppScreen.PODOMORO_SCREEN.route,
         startDestination = AppScreen.LOGIN_SCREEN.route,
         modifier = modifier,
     ) {
@@ -75,7 +74,14 @@ fun PodomoroNavGraph(
             LoginScreen(
                 uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
                 onEvent = { viewModel.handleEvent(it) },
-                navigateToRegisterScreen = { navController.navigate(AppScreen.REGISTER_SCREEN.route) }
+                navigateToRegisterScreen = { navController.navigate(AppScreen.REGISTER_SCREEN.route) },
+                navigateToPomodoroScreen = {
+                    navController.navigate(AppScreen.PODOMORO_SCREEN.route) {
+                        popUpTo(AppScreen.LOGIN_SCREEN.route) {
+                            inclusive = true
+                        }
+                    }
+                }
             )
         }
 
@@ -106,6 +112,13 @@ fun PodomoroNavGraph(
                 uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
                 onEvent = { viewModel.handleEvent(it) },
                 onBack = { navController.popBackStack() },
+                onSignOut = {
+                    navController.navigate(AppScreen.LOGIN_SCREEN.route) {
+                        popUpTo(AppScreen.PODOMORO_SCREEN.route) {
+                            inclusive = true
+                        }
+                    }
+                }
             )
         }
 

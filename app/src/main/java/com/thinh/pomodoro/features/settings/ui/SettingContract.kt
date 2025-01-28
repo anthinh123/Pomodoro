@@ -10,6 +10,7 @@ interface SettingContract : BaseMviContract<SettingUiState, SettingEvent> {
         val shortBreakTime: Int,
         val longBreakTime: Int,
         val isDarkMode: Boolean,
+        val isSignOut: Boolean,
     )
 
     sealed class SettingEvent {
@@ -17,5 +18,6 @@ interface SettingContract : BaseMviContract<SettingUiState, SettingEvent> {
         data class ShortBreakTimeChanged(val shortBreakTime: Int) : SettingEvent()
         data class LongBreakTimeChanged(val longBreakTime: Int) : SettingEvent()
         data class IsDarkModeChanged(val isDarkMode: Boolean) : SettingEvent()
+        data object SignOut : SettingEvent()
     }
 }

@@ -1,7 +1,9 @@
 package com.thinh.pomodoro.features.login.ui
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mtcld.repaircheck.core.retrofit.NetworkResult
+import com.thinh.pomodoro.features.auth.SessionManager
 import com.thinh.pomodoro.features.login.ui.LoginContract.LoginEvent
 import com.thinh.pomodoro.features.login.ui.LoginContract.LoginEvent.Login
 import com.thinh.pomodoro.features.login.ui.LoginContract.LoginEvent.OnForgotPassword
@@ -17,7 +19,23 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel(
     private val loginUseCase: LoginUseCase,
+    private val sessionManager: SessionManager,
 ) : BaseViewModel<LoginUiState, LoginEvent>() {
+
+    init {
+        Log.d("thinhav", "LoginViewModel sessionManager = " + sessionManager)
+        checkLoginSession()
+    }
+
+    private fun checkLoginSession() {
+        Log.d("thinhav", "LoginViewModel token = " + sessionManager.getAuthToken())
+
+        if (sessionManager.getAuthToken() != null) {
+            updateState {
+                copy(isLoggedIn = true)
+            }
+        }
+    }
 
     override fun createInitialState(): LoginUiState {
         return LoginUiState()
@@ -79,6 +97,7 @@ class LoginViewModel(
 
             // TODO : Use api
             delay(1000)
+            sessionManager.saveAuthToken("testAuth")
             updateState {
                 copy(isLoading = false, isLoggedIn = true)
             }

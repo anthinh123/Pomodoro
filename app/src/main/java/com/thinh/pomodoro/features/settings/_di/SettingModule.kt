@@ -16,7 +16,7 @@ import org.koin.dsl.module
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "pomodoro_settings")
 
 val settingModule = module {
-    viewModel { SettingViewModel(get(), get()) }
+    viewModel { SettingViewModel(get(), get(), get()) }
     single<SaveSettingsUseCase> { SaveSettingsUseCaseImpl(androidContext().dataStore) }
     single<GetSettingsUseCase> { GetSettingsUseCaseImpl(androidContext().dataStore) }
 }

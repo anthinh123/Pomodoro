@@ -43,6 +43,7 @@ fun LoginScreen(
     uiState: LoginUiState,
     onEvent: (LoginEvent) -> Unit,
     navigateToRegisterScreen: () -> Unit,
+    navigateToPomodoroScreen: () -> Unit,
 ) {
     val context = LocalContext.current
     LaunchedEffect(uiState.errorMessage) {
@@ -53,6 +54,12 @@ fun LoginScreen(
                 Toast.LENGTH_SHORT
             ).show()
             onEvent(ShowedErrorMessage)
+        }
+    }
+
+    LaunchedEffect(uiState.isLoggedIn) {
+        if (uiState.isLoggedIn){
+            navigateToPomodoroScreen()
         }
     }
 
@@ -193,6 +200,7 @@ fun LoginScreenPreview() {
     LoginScreen(
         uiState = LoginUiState(),
         onEvent = {},
-        navigateToRegisterScreen = {}
+        navigateToRegisterScreen = {},
+        navigateToPomodoroScreen = {}
     )
 }

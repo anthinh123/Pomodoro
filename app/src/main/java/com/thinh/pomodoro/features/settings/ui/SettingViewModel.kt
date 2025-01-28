@@ -2,6 +2,7 @@ package com.thinh.pomodoro.features.settings.ui
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.thinh.pomodoro.features.auth.SessionManager
 import com.thinh.pomodoro.features.settings.data.AppSettings
 import com.thinh.pomodoro.features.settings.ui.SettingContract.SettingEvent
 import com.thinh.pomodoro.features.settings.ui.SettingContract.SettingUiState
@@ -15,6 +16,7 @@ import kotlinx.coroutines.launch
 class SettingViewModel(
     private val getSettingsUseCase: GetSettingsUseCase,
     private val saveSettingsUseCase: SaveSettingsUseCase,
+    private val sessionManager: SessionManager,
 ) : BaseViewModel<SettingUiState, SettingEvent>() {
 
     override fun createInitialState(): SettingUiState {
@@ -22,11 +24,13 @@ class SettingViewModel(
             workTime = 0,
             shortBreakTime = 0,
             longBreakTime = 0,
-            isDarkMode = false
+            isDarkMode = false,
+            isSignOut = false,
         )
     }
 
     init {
+        Log.d("thinhav", "SettingViewModel sessionManager = " + sessionManager)
         getSettings()
     }
 
@@ -51,6 +55,15 @@ class SettingViewModel(
                 updateState { copy(isDarkMode = event.isDarkMode) }
                 saveSettings()
             }
+
+            SettingEvent.SignOut -> signOut()
+        }
+    }
+
+    private fun signOut() {
+        sessionManager.clearSession()
+        updateState {
+            copy(isSignOut = true)
         }
     }
 
