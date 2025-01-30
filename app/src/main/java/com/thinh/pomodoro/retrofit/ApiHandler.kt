@@ -1,4 +1,4 @@
-package com.mtcld.repaircheck.core.retrofit
+package com.thinh.pomodoro.retrofit
 
 import org.json.JSONObject
 import retrofit2.HttpException

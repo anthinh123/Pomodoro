@@ -35,8 +35,7 @@ enum class PomodoroAction {
     SKIP_STAGE
 }
 
-class PomodoroService(
-) : Service() {
+class PomodoroService : Service() {
 
     private val POMODORO_CHANNEL_ID = 1
 

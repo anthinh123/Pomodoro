@@ -120,7 +120,6 @@ fun LoginScreen(
                             onEvent(OnForgotPassword)
                         },
                     text = stringResource(id = R.string.forgot_password),
-//                    color = MaterialTheme.colorScheme.secondary,
                     textAlign = TextAlign.End,
                     style = MaterialTheme.typography.bodyMedium
                 )

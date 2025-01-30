@@ -1,7 +1,7 @@
 package com.thinh.pomodoro.features.login.usecase
 
-import com.mtcld.repaircheck.core.retrofit.ApiHandler
-import com.mtcld.repaircheck.core.retrofit.NetworkResult
+import com.thinh.pomodoro.retrofit.ApiHandler
+import com.thinh.pomodoro.retrofit.NetworkResult
 import com.thinh.pomodoro.features.login.network.AuthenticationApi
 import com.thinh.pomodoro.features.login.network.LoginRequest
 import com.thinh.pomodoro.features.login.network.LoginResponse

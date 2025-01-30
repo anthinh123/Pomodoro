@@ -1,4 +1,4 @@
-package com.mtcld.repaircheck.core.retrofit
+package com.thinh.pomodoro.retrofit
 
 sealed class NetworkResult<T : Any> {
     class Success<T : Any>(val code: Int, val data: T) : NetworkResult<T>()

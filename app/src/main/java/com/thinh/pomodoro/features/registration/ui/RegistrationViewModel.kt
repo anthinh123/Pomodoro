@@ -1,13 +1,16 @@
 package com.thinh.pomodoro.features.registration.ui
 
 import androidx.lifecycle.viewModelScope
+import com.thinh.pomodoro.retrofit.NetworkResult
 import com.thinh.pomodoro.features.registration.ui.RegistrationContract.RegistrationEvent
 import com.thinh.pomodoro.features.registration.ui.RegistrationContract.RegistrationUiState
+import com.thinh.pomodoro.features.registration.usecase.RegistrationUseCase
 import com.thinh.pomodoro.mvi.BaseViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class RegistrationViewModel() : BaseViewModel<RegistrationUiState, RegistrationEvent>() {
+class RegistrationViewModel(
+    private val registrationUseCase: RegistrationUseCase,
+) : BaseViewModel<RegistrationUiState, RegistrationEvent>() {
     override fun createInitialState(): RegistrationUiState {
         return RegistrationUiState()
     }
@@ -69,10 +72,30 @@ class RegistrationViewModel() : BaseViewModel<RegistrationUiState, RegistrationE
                 copy(isLoading = true)
             }
 
-            // TODO : Use api
-            delay(1000)
-            updateState {
-                copy(isLoading = false, isRegistered = true)
+            val result = registrationUseCase.execute(
+                userName = uiState.value.userName,
+                email = uiState.value.email,
+                password = uiState.value.password
+            )
+
+            when (result) {
+                is NetworkResult.Success -> {
+                    updateState {
+                        copy(isLoading = false, isRegistered = true)
+                    }
+                }
+
+                is NetworkResult.Error -> {
+                    updateState {
+                        copy(isLoading = false, errorMessage = result.errorMsg)
+                    }
+                }
+
+                is NetworkResult.Exception -> {
+                    updateState {
+                        copy(isLoading = false, errorMessage = "Something went wrong")
+                    }
+                }
             }
         }
     }
